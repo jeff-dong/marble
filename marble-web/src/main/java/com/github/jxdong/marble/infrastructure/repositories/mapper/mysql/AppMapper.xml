@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.jxdong.marble.infrastructure.repositories.mapper.mysql.AppMapper">
+
+    <resultMap id="AppRM" type="com.github.jxdong.marble.domain.model.AppDetail">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="version"/>
+    </resultMap>
+
+    <resultMap id="AppRMWithServer" type="com.github.jxdong.marble.domain.model.AppDetail">
+        <id column="appId" jdbcType="INTEGER" property="id"/>
+        <result column="appCode" jdbcType="VARCHAR" property="code"/>
+        <result column="appName" jdbcType="VARCHAR" property="name"/>
+        <result column="appDesc" jdbcType="VARCHAR" property="description"/>
+        <result column="appOwner" jdbcType="VARCHAR" property="owner"/>
+        <result column="appStatus" jdbcType="INTEGER" property="status"/>
+        <result column="appCreateTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="appUpdateTime" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="appUpdateTime" jdbcType="TIMESTAMP" property="version"/>
+        <collection property="schedulers" ofType="com.github.jxdong.marble.domain.model.SchedulerDetail">
+            <id column="schedId" jdbcType="INTEGER" property="id"/>
+            <result column="schedName" jdbcType="VARCHAR" property="name"/>
+            <result column="schedDesc" jdbcType="VARCHAR" property="description"/>
+            <result column="schedStatus" jdbcType="INTEGER" property="status"/>
+            <result column="schedCreateTime" jdbcType="TIMESTAMP" property="createTime"/>
+            <result column="schedUpdateTime" jdbcType="TIMESTAMP" property="updateTime"/>
+            <result column="schedUpdateTime" jdbcType="TIMESTAMP" property="version"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="ServerRM" type="com.github.jxdong.marble.domain.model.ServerDetail">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="version"/>
+    </resultMap>
+
+    <sql id="App_Columns">
+        app.id, app.code, app.name, app.description, app.owner, app.marbleVersion, app.status, app.createTime, app.dataChange_lastTime
+    </sql>
+
+    <sql id="Server_Columns">
+        app_s.id,
+        app_s.app_code as appCode,
+        app_s.server_group as `group`,
+        app_s.server_name as `name`,
+        app_s.server_ip as ip
+        ,app_s.server_description as description,
+        app_s.server_status as `status`,
+        app_s.createTime,
+        app_s.dataChange_lastTime
+    </sql>
+
+    <select id="selectAppById" resultMap="AppRM">
+        SELECT
+        <include refid="App_Columns"/>
+        FROM marble_app app
+        WHERE app.id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAppByCode" resultMap="AppRM">
+        SELECT
+        <include refid="App_Columns"/>
+        FROM marble_app app
+        WHERE app.code = #{appCode,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAppWithSched" parameterType="java.util.HashMap" resultMap="AppRMWithServer">
+        SELECT
+            ma.id as appId,
+            ma.`code` as appCode,
+            ma.`name` as appName,
+            ma.description as appDesc,
+            ma.`owner` as appOwner,
+            ma.`status` as appStatus,
+
+            mas.id as schedId,
+            mas.`name` as schedName,
+            mas.description as schedDesc,
+            mas.`status` as schedStatus
+        FROM
+            marble_app ma,
+            marble_app_sched mas
+        WHERE
+            ma.`code` = mas.app_code
+            <if test="appCode != null and appCode !=''">
+                AND ma.`code` = #{appCode,jdbcType=VARCHAR}
+            </if>
+            <if test="appStatus != null and appStatus>0">
+                AND ma.`status` = #{appStatus,jdbcType=INTEGER}
+            </if>
+            <if test="schedName != null and schedName!=''">
+                AND mas.`name` = #{schedName,jdbcType=VARCHAR}
+            </if>
+    </select>
+    <select id="selectAppByMultiConditions" parameterType="java.util.HashMap" resultMap="AppRM">
+        SELECT
+          <include refid="App_Columns"/>
+        FROM marble_app app
+          WHERE
+            TRUE
+            <if test="appCode != null and appCode !=''">
+                AND app.code = #{appCode,jdbcType=VARCHAR}
+            </if>
+            <if test="appName != null and appName !=''">
+                AND app.`name` like CONCAT('%', #{appName,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="owner != null and owner !=''">
+                AND app.owner = #{owner,jdbcType=VARCHAR}
+            </if>
+            <if test="statusList != null and  statusList.length>0">
+                AND app.status in
+                <foreach item="item" index="index" collection="statusList" open="(" separator="," close=")">
+                    #{status, jdbcType=SMALLINT}
+                </foreach>
+            </if>
+            <if test="orderColumn != null and orderColumn!='' ">
+                ORDER BY app.${orderColumn}
+                <if test="orderDir != null">
+                    ${orderDir}
+                </if>
+            </if>
+    </select>
+
+    <select id="selectServerByAppCode" parameterType="string" resultMap="ServerRM">
+        SELECT
+          <include refid="Server_Columns"/>
+        FROM marble_app_server app_s
+        WHERE
+            app_s.app_code = #{appCode,jdbcType=VARCHAR}
+            ORDER BY app_s.server_ip, app_s.server_status
+    </select>
+
+    <select id="selectServerBySched" resultMap="ServerRM">
+        SELECT
+            mss.id,
+            mss.app_code as appCode,
+            mss.server_ip as ip,
+            mss.server_port as `port`,
+            mss.createTime,
+            mss.dataChange_lastTime
+        FROM marble_server_sched mss
+        WHERE
+        TRUE
+        <if test="appCode != null and appCode!='' ">
+           AND mss.app_code = #{appCode, jdbcType=VARCHAR}
+        </if>
+        <if test="schedName != null and schedName!='' ">
+            AND mss.sched_name = #{schedName, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
+    <select id="selectServerById" parameterType="int" resultMap="ServerRM">
+        SELECT
+            <include refid="Server_Columns"/>
+        FROM marble_app_server app_s
+        WHERE
+        app_s.id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectServerByGroupName" resultMap="ServerRM">
+        SELECT
+          <include refid="Server_Columns"/>
+        FROM marble_app_server app_s
+        WHERE
+            app_s.app_code = #{appCode,jdbcType=VARCHAR}
+          AND app_s.server_group = #{serverGroup,jdbcType=VARCHAR}
+          AND app_s.server_name = #{serverName,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateAppById" parameterType="com.github.jxdong.marble.domain.model.AppDetail">
+        UPDATE marble_app app
+        <set>
+            <if test="owner != null">
+                app.owner = #{owner,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                app.status = #{status,jdbcType=SMALLINT},
+            </if>
+            <if test="name != null">
+                app.name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="marbleVersion != null">
+                app.marbleVersion = #{marbleVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                app.description = #{description,jdbcType=VARCHAR},
+            </if>
+            app.dataChange_lastTime = now()
+        </set>
+        WHERE app.id = #{id,jdbcType=INTEGER} and app.dataChange_lastTime = #{version, jdbcType=TIMESTAMP}
+    </update>
+
+    <insert id="insertApp" parameterType="com.github.jxdong.marble.domain.model.AppDetail">
+        INSERT INTO marble_app
+        (`code`,
+        `name`,
+        `description`,
+         `owner`,
+         `status`,
+         `marbleVersion`,
+        createTime, dataChange_lastTime)
+        VALUES (
+            #{code,jdbcType=VARCHAR},
+            #{name,jdbcType=VARCHAR},
+            #{description,jdbcType=VARCHAR},
+            #{owner,jdbcType=VARCHAR},
+            #{status,jdbcType=INTEGER},
+            #{marbleVersion,jdbcType=VARCHAR},
+            now(),
+            now())
+    </insert>
+
+    <insert id="insertAppServer" parameterType="com.github.jxdong.marble.domain.model.ServerDetail">
+        INSERT INTO marble_app_server
+                (`app_code`,
+                `server_group`,
+                `server_name`,
+                 `server_ip`,
+                `server_description`,
+                `server_status`,
+                createTime, dataChange_lastTime)
+        VALUES (#{appCode,jdbcType=VARCHAR}, #{group,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}
+       , #{status,jdbcType=INTEGER}, now(), now())
+    </insert>
+
+    <delete id="deleteApp">
+        DELETE FROM marble_app
+        WHERE `code` = #{appCode, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteAppSchedByAppCode">
+        DELETE FROM marble_app_sched
+        WHERE `app_code` = #{appCode, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteAppServerByAppCode">
+        DELETE FROM marble_app_server
+        WHERE `app_code` = #{appCode, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteAppShedServerByAppCode">
+        DELETE FROM marble_server_sched
+        WHERE `app_code` = #{appCode, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteAppServerByServerName">
+        DELETE FROM marble_app_server
+        WHERE
+            `app_code` = #{appCode, jdbcType=VARCHAR}
+        AND `server_group` = #{serverGroup, jdbcType=VARCHAR}
+        AND `server_name` = #{serverName, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteAppShedServerByServerIp">
+        DELETE FROM marble_server_sched
+        WHERE
+        `app_code` = #{appCode, jdbcType=VARCHAR}
+        AND `server_ip` = #{serverIp, jdbcType=VARCHAR}
+    </delete>
+</mapper>

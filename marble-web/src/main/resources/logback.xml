@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="stdoutLogging" target="System.out" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%5p][%d{MM-dd HH:mm:ss.SSS}][%c:%L]-%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件 -->
+    <appender name="fileLogging" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>${LOG_HOME}/log.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+
+        <!-- encoder 可以指定字符集，对于中文输出有意义 -->
+        <encoder charset="UTF-8">
+            <pattern>[%5p][%d{MM-dd HH:mm:ss}][%t][%c:%L] - %m%n</pattern>
+        </encoder>
+
+        <!--日志文件最大的大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>50MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- Root Logger -->
+    <root level="INFO">
+        <appender-ref ref="stdoutLogging"/>
+    </root>
+
+    <!--<logger name="org.springframework.*" level="ERROR" additivity="false">-->
+    <!--<appender-ref ref="stdoutLogging" />-->
+    <!--</logger>-->
+
+
+</configuration>

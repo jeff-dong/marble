@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:marble="http://www.github.com/jxdong/schema/marble"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.github.com/jxdong/schema/marble http://www.github.com/jxdong/schema/marble/marble.xsd
+           http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <bean id="quartzDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="jdbc:mysql://127.0.0.1:3307/marble?allowMultiQueries=true&amp;useUnicode=true&amp;characterEncoding=utf8"/>
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="username" value="root"/>
+        <property name="password" value="1234"/>
+    </bean>
+
+    <!-- quartz持久化存储  -->
+    <bean name="marbleScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="dataSource" ref="quartzDataSource"/>
+        <property name="applicationContextSchedulerContextKey" value="applicationContextKey"/>
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+                <prop key="org.quartz.scheduler.instanceName">MarbleQuartzScheduler</prop>
+                <!-- 线程池配置 -->
+                <prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+                <prop key="org.quartz.threadPool.threadCount">5</prop>
+                <prop key="org.quartz.threadPool.threadPriority">5</prop>
+                <!-- misfire的检测间隔。trigger设置时时间要>此间隔 -->
+                <prop key="org.quartz.jobStore.misfireThreshold">30000</prop>
+                <!-- JobStore 配置 -->
+                <prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
+                <prop key="org.quartz.jobStore.useProperties">true</prop>
+                <!-- 集群配置 -->
+                <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+                <prop key="org.quartz.jobStore.isClustered">true</prop>
+                <!-- 检查集群机器的状态，60秒检查一次 -->
+                <prop key="org.quartz.jobStore.clusterCheckinInterval">60000</prop>
+                <prop key="org.quartz.jobStore.maxMisfiresToHandleAtATime">10</prop>
+                <!-- 数据表设置 -->
+                <prop key="org.quartz.jobStore.tablePrefix">marble_qrtz_</prop>
+                <prop key="org.quartz.jobStore.dataSource">qzDS</prop>
+
+                <!-- 添加全局Job监听器 -->
+                <prop key="org.quartz.jobListener.NAME.class">com.github.jxdong.marble.global.listener.MarbleJobListener</prop>
+                <!-- 添加全局Trigger监听器 -->
+                <prop key="org.quartz.triggerListener.NAME.class">com.github.jxdong.marble.global.listener.MarbleTriggerListener</prop>
+                <!-- 添加全局Scheduler 监听器-->
+                <prop key="org.quartz.SchedulerListener.NAME.class">com.github.jxdong.marble.global.listener.MarbleSchedulerListener</prop>
+            </props>
+        </property>
+    </bean>
+    <!-- Quartz持久化结束-->
+
+
+    <!-- 配置Marble job. 如果有多个，可配置多个<marble:job ..>标签 -->
+    <!--<marble:scheduler id="taskScheduler" port="9091" appCode="888888">-->
+        <!--<marble:job name="testJob" description="Test  Job" ref="testJob"/>-->
+    <!--</marble:scheduler>-->
+</beans>

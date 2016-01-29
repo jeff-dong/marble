@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.jxdong.marble.infrastructure.repositories.mapper.mysql.JobExecutionLogMapper">
+
+    <resultMap id="JobLogRM" type="com.github.jxdong.marble.domain.model.JobExecutionLog">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="dataChange_LastTime" property="version" />
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+    <sql id="Log_Column_List">
+        mlj.id,
+        mlj.app_code as appCode,
+        mlj.sched_name as schedName,
+        mlj.job_name as jobName,
+        mlj.job_cron_express as jobCronExpress,
+        mlj.server_info as serverInfo,
+        mlj.result_code as resultCode,
+        mlj.result_msg as resultMsg,
+        mlj.createTime,
+        mlj.dataChange_lastTime
+    </sql>
+
+    <select id="selectById" resultMap="JobLogRM">
+        SELECT
+          <include refid="Log_Column_List"/>
+        FROM marble_log_job mlj
+        WHERE mlj.id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByMultiConditions" parameterType="java.util.HashMap"  resultMap="JobLogRM">
+        SELECT
+          <include refid="Log_Column_List"/>
+        FROM marble_log_job mlj
+        WHERE
+            TRUE
+            <if test="appCode != null and appCode !=''">
+                AND mlj.app_code =  #{appCode, jdbcType=VARCHAR}
+            </if>
+            <if test="schedName != null and schedName !=''">
+                AND mlj.sched_name =  #{schedName, jdbcType=VARCHAR}
+            </if>
+            <if test="jobName != null and jobName !=''">
+                AND mlj.job_name =  #{jobName, jdbcType=VARCHAR}
+            </if>
+            <if test="serverInfo != null and serverInfo !=''">
+                AND mlj.server_info =  #{serverInfo, jdbcType=VARCHAR}
+            </if>
+            <if test="beginDate != null">
+                <![CDATA[
+                AND mlj.dataChange_lastTime >= #{beginDate, jdbcType=VARCHAR}
+                ]]>
+            </if>
+            <if test="endDate != null">
+                <![CDATA[
+                AND mlj.dataChange_lastTime <= #{endDate, jdbcType=VARCHAR}
+                ]]>
+            </if>
+            <if test="resultCode != null and resultCode>0">
+                AND mlj.result_code = #{resultCode, jdbcType=INTEGER}
+            </if>
+        <if test="orderColumn != null and orderColumn !=''">
+            ORDER BY mlj.${orderColumn}
+            <if test="orderDir != null and orderDir !=''">
+                ${orderDir}
+            </if>
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.github.jxdong.marble.domain.model.JobExecutionLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO marble_log_job
+          (
+              app_code,
+              sched_name,
+              job_name,
+              job_cron_express,
+              server_info,
+              result_code,
+              result_msg,
+              createTime,
+              dataChange_lastTime
+          )
+        VALUES (
+            #{appCode,jdbcType=VARCHAR},
+            #{schedName,jdbcType=VARCHAR},
+            #{jobName,jdbcType=VARCHAR},
+            #{jobCronExpress,jdbcType=VARCHAR},
+            #{serverInfo,jdbcType=VARCHAR},
+            #{resultCode,jdbcType=INTEGER},
+            #{resultMsg,jdbcType=VARCHAR},
+            now(),
+            now()
+        )
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM marble_log_job mlj
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteJobLog">
+        DELETE FROM marble_log_job
+        WHERE
+            app_code = #{appCode, jdbcType=VARCHAR}
+            <if test="schedName != null and schedName !=''">
+                AND `sched_name` = #{schedName, jdbcType=VARCHAR}
+            </if>
+            <if test="jobName != null and jobName !=''">
+                AND `job_name` = #{jobName, jdbcType=VARCHAR}
+            </if>
+    </delete>
+
+    <!-- 临时的清理数据SQL -->
+    <delete id="deleteQuartzJobDetail">
+        DELETE FROM marble_qrtz_job_details
+    </delete>
+
+    <delete id="deleteQuartzCronTriggers">
+        DELETE FROM marble_qrtz_cron_triggers
+    </delete>
+
+    <delete id="deleteQuartzFiredTriggers">
+        DELETE FROM marble_qrtz_fired_triggers
+    </delete>
+
+    <delete id="deleteQuartzLocks">
+        DELETE FROM marble_qrtz_locks
+    </delete>
+
+    <delete id="deleteQuartzPausedTriggerGroups">
+        DELETE FROM marble_qrtz_paused_trigger_grps
+    </delete>
+
+    <delete id="deleteQuartzSchedState">
+        DELETE FROM marble_qrtz_scheduler_state
+    </delete>
+
+    <delete id="deleteQuartzTriggers">
+        DELETE FROM marble_qrtz_triggers
+    </delete>
+</mapper>
