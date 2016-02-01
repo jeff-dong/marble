@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : MySQL_DEV
-Source Server Version : 50612
-Source Host           : pub.mysql.db.dev.sh.ctripcorp.com:28747
-Source Database       : groupwormholedb
+Source Server         : localhost_3307
+Source Server Version : 50611
+Source Host           : localhost:3307
+Source Database       : marble
 
 Target Server Type    : MYSQL
-Target Server Version : 50612
+Target Server Version : 50611
 File Encoding         : 65001
 
-Date: 2016-01-29 16:12:35
+Date: 2016-02-01 15:54:11
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,10 +21,10 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `marble_app`;
 CREATE TABLE `marble_app` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增长ID',
-  `code` varchar(20) NOT NULL DEFAULT '' COMMENT '应用code。携程APPID',
+  `code` varchar(20) NOT NULL DEFAULT '' COMMENT '应用code。APPID',
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '应用名称',
   `description` varchar(100) DEFAULT NULL COMMENT '应用描述',
-  `owner` varchar(20) NOT NULL DEFAULT '' COMMENT '应用所有者. 使用携程员工号',
+  `owner` varchar(20) NOT NULL DEFAULT '' COMMENT '应用所有者. 使用员工号',
   `status` smallint(6) NOT NULL DEFAULT '0' COMMENT '应用状态。0:不可用；1:可用',
   `marbleVersion` varchar(10) DEFAULT '' COMMENT '使用的marble的版本号',
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -32,7 +32,7 @@ CREATE TABLE `marble_app` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_U_code` (`code`),
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='应用信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='应用信息表';
 
 -- ----------------------------
 -- Table structure for marble_app_sched
@@ -49,7 +49,7 @@ CREATE TABLE `marble_app_sched` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_U_app_sched` (`app_code`,`name`) USING BTREE,
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='计划任务表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='计划任务表';
 
 -- ----------------------------
 -- Table structure for marble_app_server
@@ -57,7 +57,7 @@ CREATE TABLE `marble_app_sched` (
 DROP TABLE IF EXISTS `marble_app_server`;
 CREATE TABLE `marble_app_server` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增长主键',
-  `app_code` varchar(20) NOT NULL DEFAULT '' COMMENT '应用code。携程APPID',
+  `app_code` varchar(20) NOT NULL DEFAULT '' COMMENT '应用code。APPID',
   `server_group` varchar(50) NOT NULL DEFAULT '' COMMENT '服务器所属的组',
   `server_name` varchar(50) NOT NULL DEFAULT '' COMMENT '服务器名称',
   `server_ip` varchar(20) NOT NULL DEFAULT '' COMMENT '服务器IP地址',
@@ -70,7 +70,7 @@ CREATE TABLE `marble_app_server` (
   UNIQUE KEY `IDX_U_app_server_ip` (`app_code`,`server_group`,`server_ip`),
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE,
   KEY `IDX_S_all` (`app_code`,`server_group`,`server_name`,`server_ip`,`server_status`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT=' 应用服务器对应表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT=' 应用服务器对应表';
 
 -- ----------------------------
 -- Table structure for marble_configure
@@ -106,7 +106,7 @@ CREATE TABLE `marble_log_job` (
   `dataChange_lastTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5074 DEFAULT CHARSET=utf8 COMMENT='Job执行历史记录';
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='Job执行历史记录';
 
 -- ----------------------------
 -- Table structure for marble_qrtz_blob_triggers
@@ -157,7 +157,7 @@ CREATE TABLE `marble_qrtz_cron_triggers` (
   `dataChange_lastTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
   PRIMARY KEY (`id`),
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COMMENT='存储 Cron Trigger，包括 Cron 表达式和时区信息';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='存储 Cron Trigger，包括 Cron 表达式和时区信息';
 
 -- ----------------------------
 -- Table structure for marble_qrtz_fired_triggers
@@ -189,7 +189,7 @@ CREATE TABLE `marble_qrtz_fired_triggers` (
   KEY `IDX_MARBLE_QRTZ_FT_T_G` (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
   KEY `IDX_MARBLE_QRTZ_FT_TG` (`SCHED_NAME`,`TRIGGER_GROUP`),
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='存储与已触发的 Trigger 相关的状态信息，以及相联 Job 的执行信息';
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8 COMMENT='存储与已触发的 Trigger 相关的状态信息，以及相联 Job 的执行信息';
 
 -- ----------------------------
 -- Table structure for marble_qrtz_job_details
@@ -261,7 +261,7 @@ CREATE TABLE `marble_qrtz_scheduler_state` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_U_SCHED_S` (`SCHED_NAME`,`INSTANCE_NAME`),
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8 COMMENT=' 存储少量的有关 Scheduler 的状态信息，和别的 Scheduler 实例(假如是用于一个集群中) ';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT=' 存储少量的有关 Scheduler 的状态信息，和别的 Scheduler 实例(假如是用于一个集群中) ';
 
 -- ----------------------------
 -- Table structure for marble_qrtz_simple_triggers
@@ -348,7 +348,7 @@ CREATE TABLE `marble_qrtz_triggers` (
   KEY `IDX_MARBLE_QRTZ_T_NFT_ST_MISFIRE` (`SCHED_NAME`,`MISFIRE_INSTR`,`NEXT_FIRE_TIME`,`TRIGGER_STATE`),
   KEY `IDX_MARBLE_QRTZ_T_NFT_ST_MISFIRE_GRP` (`SCHED_NAME`,`MISFIRE_INSTR`,`NEXT_FIRE_TIME`,`TRIGGER_GROUP`,`TRIGGER_STATE`),
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COMMENT='存储已配置的Trigger 的信息 ';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='存储已配置的Trigger 的信息 ';
 
 -- ----------------------------
 -- Table structure for marble_sched_job
@@ -356,7 +356,7 @@ CREATE TABLE `marble_qrtz_triggers` (
 DROP TABLE IF EXISTS `marble_sched_job`;
 CREATE TABLE `marble_sched_job` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '自增长主键',
-  `app_code` varchar(20) NOT NULL DEFAULT '' COMMENT '应用code。携程APPID',
+  `app_code` varchar(20) NOT NULL DEFAULT '' COMMENT '应用code。APPID',
   `sched_name` varchar(50) NOT NULL DEFAULT '' COMMENT '计划任务scheduler名称',
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT 'job名称',
   `description` varchar(100) DEFAULT '' COMMENT '触发器描述',
@@ -380,7 +380,7 @@ CREATE TABLE `marble_sched_job` (
 DROP TABLE IF EXISTS `marble_server_sched`;
 CREATE TABLE `marble_server_sched` (
   `id` int(20) NOT NULL AUTO_INCREMENT COMMENT '自增长主键',
-  `app_code` varchar(20) NOT NULL DEFAULT '' COMMENT '应用code。携程APPID',
+  `app_code` varchar(20) NOT NULL DEFAULT '' COMMENT '应用code。APPID',
   `server_ip` varchar(20) NOT NULL DEFAULT '' COMMENT '服务器IP',
   `server_port` int(10) NOT NULL DEFAULT '9091' COMMENT '服务器打开的socket端口号',
   `sched_name` varchar(50) NOT NULL DEFAULT '' COMMENT '计划任务名称',
@@ -389,4 +389,4 @@ CREATE TABLE `marble_server_sched` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_server_sched` (`app_code`,`server_ip`,`server_port`,`sched_name`),
   KEY `IDX_lastTime` (`dataChange_lastTime`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='服务器与计划任务关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='服务器与计划任务关系表';
