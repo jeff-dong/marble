@@ -64,7 +64,59 @@ OFFLINE端=>
 </dependency>
 ```
 
+2.定义Job具体实现类<br/>
+定义java类继承父类MarbleJob，覆盖方法execute (当Job被调用时会执行execute下的内容)。
+```java  
+@Component
+public class MarbleJob1 extends MarbleJob {
+ 
+    private static final Logger logger = LoggerFactory.getLogger(MarbleJob1.class);
+ 
+    @Override
+    public void execute(String param) {
+        logger.debug("******** MarbleJob1 开始执行啦 ********");
+    }
+}
+```
+
+3. Spring中添加Job配置<br/>
+
+marble框架中已经自定义了Spring标签<marble ..>方便直接配置。
+示例配置如下：
+```java 
+<marble:scheduler id="Scheduler001" port="9091" appCode="8890">
+    <marble:job name="Job1" description="jobDescription1" ref="marbleJob1"/>
+    <marble:job name="Job2" description="jobDescription2" ref="marbleJob2"/>
+</marble:scheduler>
+```
+
+配置解释：<br/>
+
+配置了一个名称为Scheduler001的计划任务（job组），在9091端口上暴露服务。<br/>
+Scheduler001下包含了两个Job：job1和job2.<br/>
+Job1的实现类是 Spring bean  - marbleJob1；<br/>
+Job2的实现类是Spring Bean – marbleJob2<br/>
+
+Marble标签详解：<br/>
+<marble:scheduler/>: 计划任务配置。一个应用可以配置多个计划任务，每个计划任务暴露在一个IP的端口下，一个计划任务中可以包含多个Job。
+id（必填）：ID属性，英文+数字的组合来定义该计划任务的唯一标识。
+host（非必填）：所在服务器的IP地址。指定后Marble会尝试将服务暴露在该IP下。不是必填项。由于集群，建议该字段不填，Marble默认会自动获取；
+port（必填）：计划任务暴露的端口号。指明该计划任务暴露在机器的哪个端口下，Marble随Spring启动后会尝试打开本机的该端口并暴露服务。
+appCode（必填）：所在应用的携程APPID。为了在同一台机器上区别不同的应用，以免调用时混淆。
+<marble:job/>: 计划任务下的job的配置。指明具体任务的别名以及实现类。
+name（必填）：给当前Job起的别名，在所属的scheduler下必须唯一。
+description（非必填）：Job的描述信息，仅用来便于开发者自己识别，非必填。
+ref（必填）：Job的具体实现类，必须指向存在的一个Spring Bean。值为bean的name。且该bean必须继承自MarbleJob并覆盖execute方法。Job被调用时会执行execute方法，因此执行逻辑要写在execute中。
+
+
+
 ####接入Marble - OFFLINE端
+名称	值	必填？	备注 (DB表字段)
+房源标题		Y	space:name
+个性描述		Y	space:description
+内部情况		Y	暂无
+交通情况		N	space:traffic
+周边情况		N	space:surroundings
 
 
 # 关于作者
