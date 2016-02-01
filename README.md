@@ -98,7 +98,7 @@ Job1的实现类是 Spring bean  - marbleJob1；<br/>
 Job2的实现类是Spring Bean – marbleJob2<br/>
 
 Marble标签详解：<br/>
-<marble:scheduler/>: 计划任务配置。一个应用可以配置多个计划任务，每个计划任务暴露在一个IP的端口下，一个计划任务中可以包含多个Job。
+\<marble:scheduler/\>: 计划任务配置。一个应用可以配置多个计划任务，每个计划任务暴露在一个IP的端口下，一个计划任务中可以包含多个Job。
 
 | 属性        |    是否必填      | 描述   |
 | ------------- |:-------------:| -----:|
@@ -107,7 +107,7 @@ Marble标签详解：<br/>
 | port| 必填| 计划任务暴露的端口号。指明该计划任务暴露在机器的哪个端口下，Marble随Spring启动后会尝试打开本机的该端口并暴露服务。|
 | appCode |（必填） | 所在应用的携程APPID。为了在同一台机器上区别不同的应用，以免调用时混淆。|
 
-<marble:job/>: 计划任务下的job的配置。指明具体任务的别名以及实现类。
+\<marble:job/\>: 计划任务下的job的配置。指明具体任务的别名以及实现类。
 
 | 属性        |    是否必填      | 描述   |
 | ------------- |:-------------:| -----:|
@@ -118,11 +118,40 @@ Marble标签详解：<br/>
 
 
 ####接入Marble - OFFLINE端
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+
+1、添加相关应用<br/>
+
+![](https://github.com/jeff-dong/marble/blob/master/document/images/marble_offline_addapp.png) 
+* 应用Code：唯一的APPID
+* 应用name：应用name必须与server端中<marble:scheduler/>标签的appCode属性值一致
+* 应用描述
+* 应用拥有者：输入员工号
+* Marble版本号：2.0.0开始支持Netty
+
+2、应用下添加运行的服务器（可添加多台）<br/>
+
+![](https://github.com/jeff-dong/marble/blob/master/document/images/marble_offline_addserver.png) 
+* 服务器组：默认DEFAULT
+* 服务器name：组内唯一
+* 服务器描述
+
+3、应用下添加Scheduler <br/>
+
+![](https://github.com/jeff-dong/marble/blob/master/document/images/marble_offline_addSched.png) 
+* Scheduler名称：唯一Scheduler
+* Scheduler 描述
+* 服务器相关信息（点击选中输入打开的端口号）
+
+4、Scheduler下添加多个Job <br/>
+
+![](https://github.com/jeff-dong/marble/blob/master/document/images/marble_offline_addjob.png) 
+* Job名称：唯一job
+* job 描述
+* Cron表达式： 通过控件选择（具体含义，请 自行百度Cron表达式）
+* Misfire策略选择（目前提供三种方式）
+* Job执行参数：String类型
+
+
 
 # 关于作者
 Java菜鸟。联系方式djx_19881022@163.com
