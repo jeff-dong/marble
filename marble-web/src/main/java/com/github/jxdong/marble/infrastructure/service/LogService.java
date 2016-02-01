@@ -6,7 +6,7 @@ import com.github.jxdong.marble.global.util.SpringContextUtil;
 
 /**
  * 日志服务
- * @author <a href="jxdong@Ctrip.com">jeff</a>
+ * @author <a href="dongjianxing@aliyun.com">jeff</a>
  * @version 2016/2/1 14:37
  */
 public class LogService {
