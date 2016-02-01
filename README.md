@@ -31,12 +31,12 @@ Marble部署图如下：
 ##接入Marble步骤：
 
 服务端=>
-1.	引入相关Jar包(Netty等)
-2.	定义Job的具体实现类（Spring中的Bean）
-3.	Spring中配置Job的实现类
+1. 引入相关Jar包(Netty等)<br /> 
+2. 定义Job的具体实现类（Spring中的Bean）<br /> 
+3. Spring中配置Job的实现类<br /> 
 
 OFFLINE端=>
-1. 配置对应应用和Job信息（配合权限管理）
+1. 配置对应应用和Job信息（配合权限管理）<br /> 
 
 ####接入Marble - 服务端
 1、引入相关Jar包（以Maven为例）
