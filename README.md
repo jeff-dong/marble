@@ -111,13 +111,11 @@ ref（必填）：Job的具体实现类，必须指向存在的一个Spring Bean
 
 
 ####接入Marble - OFFLINE端
-名称	值	必填？	备注 (DB表字段)
-房源标题		Y	space:name
-个性描述		Y	space:description
-内部情况		Y	暂无
-交通情况		N	space:traffic
-周边情况		N	space:surroundings
-
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
 
 # 关于作者
 Java菜鸟。联系方式djx_19881022@163.com
