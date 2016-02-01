@@ -8,7 +8,7 @@ Marble是一款Java实现的JOB调度框架。目的是：
 
 Marble分服务端和OFFLINE端两部分。
 服务端>>
-	服务端以jar包形式存在。目前版本(2.0.0)仅支持与Spring的整合使用。服务端提供Spring的自定义标签可最大限度简化开发人员接入Marble。
+    服务端以jar包形式存在。目前版本(2.0.0)仅支持与Spring的整合使用。服务端提供Spring的自定义标签可最大限度简化开发人员接入Marble。
 详情见<<服务端使用>>章节
 
 OFFLINE>>
@@ -31,19 +31,19 @@ Marble部署图如下：
 ##接入Marble步骤：
 
 服务端=>
-1. 引入相关Jar包(Netty等)<br /> 
-2. 定义Job的具体实现类（Spring中的Bean）<br /> 
-3. Spring中配置Job的实现类<br /> 
+1. 引入相关Jar包(Netty等)
+1. 定义Job的具体实现类（Spring中的Bean）
+1. Spring中配置Job的实现类
 
 OFFLINE端=>
-1. 配置对应应用和Job信息（配合权限管理）<br /> 
+1. 配置对应应用和Job信息（配合权限管理）
 
 ####接入Marble - 服务端
-1、引入相关Jar包（以Maven为例）
+1. 引入相关Jar包（以Maven为例）<br/>
 注：依赖marble-agent包（自己通过源代码的marble-server模块生成）和Thrift包
-···XML
+```java  
 <!-- Marble相关 -->
-<dependency>
+  <dependency>
     <groupId>com.github.jxdong</groupId>
     <artifactId>marble-agent</artifactId>
     <version>1.0.1</version>
@@ -62,6 +62,8 @@ OFFLINE端=>
 	<artifactId>netty-all</artifactId>
 	<version>5.0.0.Alpha2</version>
 </dependency>
+```
+
 ####接入Marble - OFFLINE端
 
 
