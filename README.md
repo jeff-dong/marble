@@ -6,7 +6,9 @@ Marble是一款Java实现的JOB调度框架。目的是：
 2）最大限度的使开发java job时只关注实现业务逻辑，透明化Job底层实现；
 3）提供对job调度的统一管理和配置；
 
-Marble分服务端和OFFLINE端两部分。
+Marble分服务端和OFFLINE端两部分。部署图如下：
+![](https://github.com/jeff-dong/marble/blob/master/document/images/marble_deployment__diagram.png) 
+
 
 ####服务端简介>>
 服务端以jar包形式存在。目前版本(2.0.0)仅支持与Spring的整合使用。服务端提供Spring的自定义标签可最大限度简化开发人员接入Marble。
