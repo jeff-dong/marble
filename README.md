@@ -99,14 +99,20 @@ Job2的实现类是Spring Bean – marbleJob2<br/>
 
 Marble标签详解：<br/>
 <marble:scheduler/>: 计划任务配置。一个应用可以配置多个计划任务，每个计划任务暴露在一个IP的端口下，一个计划任务中可以包含多个Job。
-id（必填）：ID属性，英文+数字的组合来定义该计划任务的唯一标识。
-host（非必填）：所在服务器的IP地址。指定后Marble会尝试将服务暴露在该IP下。不是必填项。由于集群，建议该字段不填，Marble默认会自动获取；
-port（必填）：计划任务暴露的端口号。指明该计划任务暴露在机器的哪个端口下，Marble随Spring启动后会尝试打开本机的该端口并暴露服务。
-appCode（必填）：所在应用的携程APPID。为了在同一台机器上区别不同的应用，以免调用时混淆。
+| 属性        |    是否必填      | 描述   |
+| ------------- |:-------------:| -----:|
+| id | 必填 | ID属性，英文+数字的组合来定义该计划任务的唯一标识。|
+| host | 非必填      |   所在服务器的IP地址。指定后Marble会尝试将服务暴露在该IP下。不是必填项。由于集群，建议该字段不填，Marble默认会自动获取； |
+| zebra stripes | are neat      |    $1 |
+| port| 必填| 计划任务暴露的端口号。指明该计划任务暴露在机器的哪个端口下，Marble随Spring启动后会尝试打开本机的该端口并暴露服务。|
+| appCode |（必填） | 所在应用的携程APPID。为了在同一台机器上区别不同的应用，以免调用时混淆。|
+
 <marble:job/>: 计划任务下的job的配置。指明具体任务的别名以及实现类。
-name（必填）：给当前Job起的别名，在所属的scheduler下必须唯一。
-description（非必填）：Job的描述信息，仅用来便于开发者自己识别，非必填。
-ref（必填）：Job的具体实现类，必须指向存在的一个Spring Bean。值为bean的name。且该bean必须继承自MarbleJob并覆盖execute方法。Job被调用时会执行execute方法，因此执行逻辑要写在execute中。
+| 属性        |    是否必填      | 描述   |
+| ------------- |:-------------:| -----:|
+| name | 必填 | 给当前Job起的别名，在所属的scheduler下必须唯一。|
+| description | 非必填 | ob的描述信息，仅用来便于开发者自己识别，非必填。|
+| ref | 必填 | Job的具体实现类，必须指向存在的一个Spring Bean。值为bean的name。且该bean必须继承自MarbleJob并覆盖execute方法。Job被调用时会执行execute方法，因此执行逻辑要写在execute中。|
 
 
 
