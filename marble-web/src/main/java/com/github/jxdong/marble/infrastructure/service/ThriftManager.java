@@ -18,9 +18,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 
 /**
+ * Marble 2.0开始转移到Netty，请用NettyClientManager代替
  * @author <a href="dongjianxing@aliyun.com">jeff</a>
  * @version 2015/11/10 9:21
  */
+@Deprecated
 public class ThriftManager implements RPCClientManager{
     private static final Logger logger = LoggerFactory.getLogger(ThriftManager.class);
     private static final int MAX_TRY_COUNT = 3;

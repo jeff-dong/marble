@@ -58,8 +58,8 @@ public class MarbleSchedulerBean<T> extends SchedulerBeanConfig implements Initi
 
     public void onApplicationEvent(ApplicationEvent event) {
         if (ContextRefreshedEvent.class.getName().equals(event.getClass().getName())) {
-            //MarbleManager.getInstance().startServer();
-            MarbleManager.getInstance().setApplicationContext(applicationContext).startNettyServer();
+            //启动Netty Server
+            MarbleManager.getInstance().startNettyServer();
         }
 
     }

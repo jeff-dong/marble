@@ -2,7 +2,6 @@ package com.github.jxdong.marble.domain.model;
 
 import com.github.jxdong.common.util.JacksonUtil;
 import com.github.jxdong.common.util.StringUtils;
-import com.github.jxdong.marble.server.thrift.ThriftConnectInfo;
 import org.quartz.CronExpression;
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
@@ -31,7 +30,7 @@ public class JobDetail extends Entity {
     private int misfireStrategy;
 
     private String className;
-    private ThriftConnectInfo connectInfo;
+    private MarbleJobInfo marbleJobInfo;
 
     public boolean validateParamForInsert(){
         return !(app==null || StringUtils.isBlank(app.getCode()) ||
@@ -57,14 +56,10 @@ public class JobDetail extends Entity {
             //DataMap数据提取
             JobDataMap dataMap = qJob.getJobDataMap();
             if(dataMap != null ){
-                if(dataMap.get("THRIFT_CONNECT_INFO")!=null){
-                    this.connectInfo = JacksonUtil.json2pojo(dataMap.get("THRIFT_CONNECT_INFO").toString(), ThriftConnectInfo.class);
-                }
-                if(dataMap.get("JOB_INFO")!=null){
-                    JobBasicInfo jobBasicInfo = JacksonUtil.json2pojo(dataMap.get("JOB_INFO").toString(), JobBasicInfo.class);
-                    if(jobBasicInfo != null){
-                        this.param = jobBasicInfo.getParam();
-                    }
+                if(dataMap.get("MARBLE_JOB_INFO")!=null){
+                    marbleJobInfo = JacksonUtil.json2pojo(dataMap.get("MARBLE_JOB_INFO").toString(), MarbleJobInfo.class);
+
+                    this.param = marbleJobInfo.getJobParam();
                 }
             }
             if(trigger != null){
@@ -83,14 +78,6 @@ public class JobDetail extends Entity {
 
     public String getClassName() {
         return className;
-    }
-
-    public ThriftConnectInfo getConnectInfo() {
-        return connectInfo;
-    }
-
-    public void setConnectInfo(ThriftConnectInfo connectInfo) {
-        this.connectInfo = connectInfo;
     }
 
     public String getTriggerDesc() {

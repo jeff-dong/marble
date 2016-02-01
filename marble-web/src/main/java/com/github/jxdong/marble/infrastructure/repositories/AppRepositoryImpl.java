@@ -222,10 +222,10 @@ public class AppRepositoryImpl implements AppRepository {
             logger.info("delete ({}) App Scheduler records from DB", ret);
             //3、删除应用下服务器信息。marble_app_server
             ret = appMapper.deleteAppServerByAppCode(appCode);
-            logger.info("delete ({}) App Server records from DB", ret);
+            logger.info("delete ({}) App MarbleServerInfo records from DB", ret);
             //4、删除计划任务下服务器信息。marble_server_sched
             ret = appMapper.deleteAppShedServerByAppCode(appCode);
-            logger.info("delete ({}) App Sched Server records from DB", ret);
+            logger.info("delete ({}) App Sched MarbleServerInfo records from DB", ret);
 
             //5、停止应用下所有Job
             Result result = quartzManager.removeJob(appCode, null, null);

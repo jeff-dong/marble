@@ -63,9 +63,7 @@
     </bean>
 
     <bean id="exceptionResolver" class="com.github.jxdong.marble.global.exception.MarbleExceptionHandler">
-        <property name="defaultErrorView">
-            <value>error.ftl</value>
-        </property>
+        <property name="defaultErrorView" value="error.ftl"/>
     </bean>
 
     <!-- Spring MVC拦截器，负责登陆验证+恶意请求校验-->

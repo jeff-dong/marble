@@ -4,8 +4,8 @@
        xmlns:marble="http://www.github.com/jxdong/schema/marble"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.github.com/jxdong/schema/marble http://www.github.com/jxdong/schema/marble/marble.xsd
-           http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+           http://www.github.com/jxdong/schema/marble
+           http://www.github.com/jxdong/schema/marble/marble.xsd">
 
 
     <bean id="quartzDataSource" class="org.apache.commons.dbcp.BasicDataSource">
@@ -55,7 +55,7 @@
 
 
     <!-- 配置Marble job. 如果有多个，可配置多个<marble:job ..>标签 -->
-    <!--<marble:scheduler id="taskScheduler" port="9091" appCode="888888">-->
-        <!--<marble:job name="testJob" description="Test  Job" ref="testJob"/>-->
-    <!--</marble:scheduler>-->
+    <marble:scheduler id="taskScheduler" port="9091" appCode="888888">
+        <marble:job name="testJob" description="Test  Job" ref="testJob"/>
+    </marble:scheduler>
 </beans>

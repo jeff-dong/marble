@@ -11,7 +11,6 @@ import com.github.jxdong.marble.global.util.SqlErrorUtil;
 import com.github.jxdong.marble.infrastructure.repositories.mapper.mysql.AppMapper;
 import com.github.jxdong.marble.infrastructure.repositories.mapper.mysql.SchedMapper;
 import com.github.jxdong.marble.infrastructure.service.QuartzManager;
-import com.github.jxdong.marble.server.thrift.ThriftConnectInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -224,9 +224,9 @@ public class SchedRepositoryImpl implements SchedRepository {
             return Result.FAILURE("查询不到App信息");
         }
         //拼接ThriftConnectInfo数组
-        List<ThriftConnectInfo.Server> serverList = new ArrayList<>();
+        List<MarbleServerInfo> serverList = new ArrayList<>();
         for (ServerDetail server : schedServers) {
-            serverList.add(new ThriftConnectInfo.Server(server.getIp(), server.getPort()));
+            serverList.add(new MarbleServerInfo(server.getIp(), server.getPort()));
         }
 
         return quartzManager.addJob(

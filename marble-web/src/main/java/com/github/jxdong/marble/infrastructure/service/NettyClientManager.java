@@ -113,10 +113,10 @@ public class NettyClientManager implements RPCClientManager {
     }
 
     public static NettyClientManager getInstance(){
-        return SigletonHolder.instance;
+        return SingletonHolder.instance;
     }
 
-    private static class SigletonHolder {
+    private static class SingletonHolder {
         private static final NettyClientManager instance = new NettyClientManager();
     }
 }

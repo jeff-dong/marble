@@ -6,7 +6,6 @@ import com.github.jxdong.marble.server.spring.JobBeanConfig;
 import com.github.jxdong.marble.server.spring.MarbleSchedulerBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.concurrent.Executors;
 public class MarbleManager {
     private static final Logger logger = LoggerFactory.getLogger(MarbleManager.class);
 
-    private ApplicationContext applicationContext;
     private Map<String, MarbleSchedulerBean> schedulerMap = new HashMap<>();
     //存储key与marble job的映射关系
     private Map<String, MarbleJob> marbleJobMap = new HashMap<>();
@@ -34,12 +32,12 @@ public class MarbleManager {
     private MarbleManager() {
     }
 
-    private static class SigletonHolder {
+    private static class SingletonHolder {
         private static final MarbleManager MARBLE_HELPER = new MarbleManager();
     }
 
     public static MarbleManager getInstance() {
-        return SigletonHolder.MARBLE_HELPER;
+        return SingletonHolder.MARBLE_HELPER;
     }
 
     public void registerScheduler(String name, MarbleSchedulerBean schedulerBean) {
@@ -48,36 +46,38 @@ public class MarbleManager {
         }
     }
 
+    /**
+     * 启动Netty Server
+     */
     @SuppressWarnings({"unchecked"})
     public synchronized void startNettyServer() {
         if (this.schedulerMap == null || schedulerMap.size() == 0 || serverStarted) {
-            logger.error("Illegal arguments. Detail: ", schedulerMap);
+            logger.error("[Start Netty Server] failed. Illegal arguments. Detail: ", schedulerMap);
             return;
         }
         serverStarted = true;
         try {
-
-            ExecutorService executor = Executors.newFixedThreadPool(schedulerMap.size());
-            for (final Map.Entry<String, MarbleSchedulerBean> entry : schedulerMap.entrySet()) {
+            ExecutorService executor = Executors.newFixedThreadPool(Math.min(schedulerMap.size(), 5));
+            for (Map.Entry<String, MarbleSchedulerBean> entry : schedulerMap.entrySet()) {
                 if (entry.getValue() == null) {
                     continue;
                 }
                 final MarbleSchedulerBean schedulerBean = entry.getValue();
                 if (schedulerBean.getPort() <= 0 || schedulerBean.getPort() >= 65535) {
-                    logger.error("Illegal socket port of this scheduler, ignore. Scheduler Info: ", schedulerBean);
+                    logger.error("[Start Netty Server] failed. Illegal socket port of this scheduler, ignore. Scheduler Info: ", schedulerBean);
                     continue;
                 }
 
                 List<JobBeanConfig> jobs = schedulerBean.getJobs();
                 if (jobs == null || jobs.size() == 0) {
-                    logger.error("No jobs found in this scheduler, ignore. Scheduler Info: ", schedulerBean);
+                    logger.error("[Start Netty Server] failed. No jobs found in this scheduler, ignore. Scheduler Info: ", schedulerBean);
                     continue;
                 }
                 //遍历Job放入marbleJobMap
                 for (JobBeanConfig jobBeanConfig : jobs) {
                     if (jobBeanConfig != null && jobBeanConfig.getRef() != null) {
                         String jobRegName = entry.getKey() + "-" + jobBeanConfig.getName();
-                        logger.info("Netty: Register Job({}) on port({})", jobRegName, schedulerBean.getPort());
+                        logger.info("[Start Netty Server] Netty: register Job({}) on port({})", jobRegName, schedulerBean.getPort());
                         marbleJobMap.put(jobRegName, jobBeanConfig.getRef());
                     }
                 }
@@ -88,10 +88,10 @@ public class MarbleManager {
                         NettyServer.getInstance().run(schedulerBean.getPort());
                     }
                 });
-                executor.shutdown();
             }
+            executor.shutdown();
         } catch (Exception e) {
-            logger.error("Run service exception.", e);
+            logger.error("[Start Netty Server] failed. Netty run exception.", e);
         }
     }
 
@@ -99,15 +99,10 @@ public class MarbleManager {
         try {
             NettyServer.getInstance().stop();
             serverStarted = false;
-            logger.info("stop the server successfully");
+            logger.info("Stop the netty server successfully");
         } catch (Exception e) {
-            logger.error("failed to stop server. error: ", e);
+            logger.error("Failed to stop netty server. error: ", e);
         }
-    }
-
-    public MarbleManager setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-        return this;
     }
 
     public MarbleJob getMarbleJobByKey(String key) {

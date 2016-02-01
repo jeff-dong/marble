@@ -35,6 +35,7 @@ public class NettyServer {
                             ch.pipeline().addLast(new ObjectDecoder(1024*1024,
                                     ClassResolvers.weakCachingConcurrentResolver(this.getClass().getClassLoader())));
                             //添加对象编码器 在服务器对外发送消息的时候自动将实现序列化的POJO对象编码
+                            //TODO 改为第三方的序列化反序列化提升效率
                             ch.pipeline().addLast(new ObjectEncoder());
 
                             ch.pipeline().addLast(new NettyServerHandler());

@@ -52,7 +52,7 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
                 if(classInfo != null && StringUtils.isNotBlank(classInfo.getClassName())){
                     MarbleJob marbleJob = MarbleManager.getInstance().getMarbleJobByKey(classInfo.getClassName());
                     if(marbleJob == null){
-                        logger.warn("Cannot find the MarbleJob-{} from cache.", classInfo.getClassName());
+                        logger.warn("cannot find the MarbleJob-{} from cache.", classInfo.getClassName());
                         continue;
                     }
                     Map<String, Object> result = executeSpringBean(executor, marbleJob, classInfo);

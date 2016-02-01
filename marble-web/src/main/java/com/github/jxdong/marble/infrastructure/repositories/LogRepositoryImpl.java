@@ -1,9 +1,10 @@
-package com.github.jxdong.marble.infrastructure.service;
+package com.github.jxdong.marble.infrastructure.repositories;
 
 import com.github.jxdong.common.util.DateUtil;
 import com.github.jxdong.marble.domain.model.JobExecutionLog;
 import com.github.jxdong.marble.domain.model.Page;
 import com.github.jxdong.marble.domain.model.Result;
+import com.github.jxdong.marble.domain.repositories.LogRepository;
 import com.github.jxdong.marble.infrastructure.repositories.mapper.mysql.JobExecutionLogMapper;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
@@ -23,9 +24,9 @@ import java.util.Map;
  * @author <a href="dongjianxing@aliyun.com">jeff</a>
  * @version 2015/11/17 14:14
  */
-@Component
-public class LogManager {
-    private static Logger logger = LoggerFactory.getLogger(LogManager.class);
+@Component("logRepository")
+public class LogRepositoryImpl implements LogRepository{
+    private static Logger logger = LoggerFactory.getLogger(LogRepositoryImpl.class);
 
     @Autowired
     private JobExecutionLogMapper jobLogMapper;
