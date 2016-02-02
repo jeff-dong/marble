@@ -12,7 +12,7 @@
 * [关于作者](#author_about)
    
 
-#<a id="introduction"/> Marble简介
+#<a name="introduction"/> Marble简介
 
 Marble是一款Java实现的JOB调度框架。目的是：
 1）填补目前xxx公司没有java版调度框架的缺憾；
@@ -121,7 +121,7 @@ Marble标签详解：<br/>
 | id | 必填 | ID属性，英文+数字的组合来定义该计划任务的唯一标识。|
 | host | 非必填      |   所在服务器的IP地址。指定后Marble会尝试将服务暴露在该IP下。不是必填项。由于集群，建议该字段不填，Marble默认会自动获取； |
 | port| 必填| 计划任务暴露的端口号。指明该计划任务暴露在机器的哪个端口下，Marble随Spring启动后会尝试打开本机的该端口并暴露服务。|
-| appCode |（必填） | 所在应用的携程APPID。为了在同一台机器上区别不同的应用，以免调用时混淆。|
+| appCode |（必填） | 所在应用的APPID。为了在同一台机器上区别不同的应用，以免调用时混淆。|
 
 \<marble:job/\>: 计划任务下的job的配置。指明具体任务的别名以及实现类。
 
