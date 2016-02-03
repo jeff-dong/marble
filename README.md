@@ -1,6 +1,6 @@
 ##<a name="index"/>目录
 * [Marble简介](#introduction)
-* [Marble使用](#uasge)
+* [Marble使用](#usage)
     * [接入Marble步骤](#usage_access)
         - * [接入Marble - 服务端](#usage_access_server_side)
         - * [接入Marble - OFFLINE端](#usage_access_offline_side)
@@ -22,7 +22,7 @@ Marble是一款Java实现的JOB调度框架。目的是：<br/>
 Marble分服务端和OFFLINE端两部分。<br/>
 服务端>>
     服务端以jar包形式存在。目前版本(2.0.0)仅支持与Spring的整合使用。服务端提供Spring的自定义标签可最大限度简化开发人员接入Marble。
-详情见<< [Marble使用](#uasge)>>章节
+详情见<< [Marble使用](#usage)>>章节
 
 OFFLINE>>
 	为了可视化管理JOB，提供一个前端基于Bootstrap, 后端采用SpringMVC + MyBatis + MySql结构的控制台。提供基本的JOB的增删改查，启动/暂停等操作。
