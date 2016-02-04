@@ -8,7 +8,7 @@
     * [Marble实现原理 - 一次JOB调度过程](#principle_job_dispatch) 
     * [Marble实现原理 - 集群支持](#principle_cluster_impl)
     * [Marble实现原理 - Misfire策略](#principle_misfire_impl)
-* [后续计划](#development_plan)
+* [存在的问题+后续计划](#development_plan)
 * [关于作者](#author_about)
    
 
