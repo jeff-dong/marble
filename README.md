@@ -199,7 +199,11 @@ TODO
 ### Marble实现原理 - Misfire策略
 
 <a name="development_plan"/>
-#后续计划
+#存在的问题 + 后续计划
+
+*由于集群依赖于DB，如果大量JOB管理会造成DB的资源竞争加剧，从而引发JOB的misfire；
+*更多功能等待添加，比如：手动执行，监控，报警，分析等;
+*...
 
 TODO
 
