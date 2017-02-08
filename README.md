@@ -55,6 +55,7 @@ OFFLINE端=>
 1. 配置对应应用和Job信息（配合权限管理）
 
 <a name="usage_access_server_side"/>
+
 ####接入Marble - 服务端
 1. 引入相关Jar包（以Maven为例）<br/>
 注：依赖marble-agent包（自己通过源代码的marble-server模块生成）和Thrift包
@@ -77,22 +78,37 @@ OFFLINE端=>
 <dependency>
 	<groupId>io.netty</groupId>
 	<artifactId>netty-all</artifactId>
-	<version>5.0.0.Alpha2</version>
+	<version>4.0.4.Final</version>
 </dependency>
 ```
 
 2.定义Job具体实现类<br/>
 定义java类继承父类MarbleJob，覆盖方法execute (当Job被调用时会执行execute下的内容)。
-```java  
+```java  
+//异步JOB
 @Component
-public class MarbleJob1 extends MarbleJob {
- 
-    private static final Logger logger = LoggerFactory.getLogger(MarbleJob1.class);
- 
-    @Override
-    public void execute(String param) {
-        logger.debug("******** MarbleJob1 开始执行啦 ********");
-    }
+public class TestMarbleJob1 extends MarbleJob {
+    private Logger logger = LoggerFactory.getLogger(TestMarbleJob1.class);
+    @Override
+    public void execute(String param) {
+        logger.info(" 异步 JOB1 执行正常： {}", param);
+    }
+}
+//同步JOB
+@Component
+public class TestSyncMarbleJob1 extends MarbleJob {
+    private Logger logger = LoggerFactory.getLogger(TestSyncMarbleJob1.class);
+ 
+    @Override
+    public Result executeSync(String param) {
+        logger.info(" 同步 JOB1(3S) 执行正常： {}", param);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return Result.SUCCESS();
+    }
 }
 ```
 
@@ -102,8 +118,8 @@ marble框架中已经自定义了Spring标签<marble ..>方便直接配置。
 示例配置如下：
 ```java 
 <marble:scheduler id="Scheduler001" port="9091" appCode="8890">
-    <marble:job name="Job1" description="jobDescription1" ref="marbleJob1"/>
-    <marble:job name="Job2" description="jobDescription2" ref="marbleJob2"/>
+    <marble:job name="Job1" description="jobDescription1" ref="testMarbleJob1"/>
+    <marble:job name="Job2" description="jobDescription2" ref="testSyncMarbleJob1"/>
 </marble:scheduler>
 ```
 
@@ -111,8 +127,8 @@ marble框架中已经自定义了Spring标签<marble ..>方便直接配置。
 
 配置了一个名称为Scheduler001的计划任务（job组），在9091端口上暴露服务。<br/>
 Scheduler001下包含了两个Job：job1和job2.<br/>
-Job1的实现类是 Spring bean  - marbleJob1；<br/>
-Job2的实现类是Spring Bean – marbleJob2<br/>
+Job1的实现类是 Spring bean  - testMarbleJob1<br/>
+Job2的实现类是Spring Bean – testSyncMarbleJob1<br/>
 
 Marble标签详解：<br/>
 \<marble:scheduler/\>: 计划任务配置。一个应用可以配置多个计划任务，每个计划任务暴露在一个IP的端口下，一个计划任务中可以包含多个Job。
