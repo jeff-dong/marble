@@ -14,15 +14,9 @@
 
 #<a name="introduction"/> Marble简介
 
-Marble是一款Java实现的JOB调度框架。目的是：<br/>
-* 1）填补目前xxx没有java版调度框架的缺憾；
-* 2）最大限度的使开发java job时只关注实现业务逻辑，透明化Job底层实现；
-* 3）提供对job调度的统一管理和配置；
-
-Marble分服务端和OFFLINE端两部分。<br/>
-服务端>>
-    服务端以jar包形式存在。目前版本(2.0.0)仅支持与Spring的整合使用。服务端提供Spring的自定义标签可最大限度简化开发人员接入Marble。
-详情见<< [Marble使用](#usage)>>章节
+Marble是一款基于Quartz的计划任务调度系统，提供基本的任务定时调度功能。Marble包含两部分：<br/>
+* 1）Marble OFFLINE: 一套可视化的JOB配置系统。包含JOB的启停、频率配置、调度日志查看等功能；
+* 2）Marble AGENT：以Jar包形式整合进接入Marble的第三方应用，透明化Job的调度过程；详情见<< [Marble使用](#usage)>>章节
 
 OFFLINE>>
 	为了可视化管理JOB，提供一个前端基于Bootstrap, 后端采用SpringMVC + MyBatis + MySql结构的控制台。提供基本的JOB的增删改查，启动/暂停等操作。
