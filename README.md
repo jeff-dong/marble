@@ -83,7 +83,7 @@ OFFLINE端=>
 ```
 
 2.定义Job具体实现类<br/>
-定义java类继承父类MarbleJob，覆盖方法execute (当Job被调用时会执行execute下的内容)。
+定义java类继承父类MarbleJob，覆盖方法execute (当Job被调用时会执行execute下的内容)。<br/>
 ```java  
 //异步JOB
 @Component
