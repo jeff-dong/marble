@@ -1,6 +1,6 @@
 package com.github.jxdong.marble.controller;
 
-import com.github.jxdong.common.util.StringUtils;
+import com.github.jxdong.marble.common.util.StringUtils;
 import com.github.jxdong.marble.domain.model.Response;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/12/29 13:05
  */
 @Controller

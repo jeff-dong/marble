@@ -1,7 +1,7 @@
 package com.github.jxdong.marble.domain.model.enums;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/17 19:23
  */
 public enum ServerStatusEnum {

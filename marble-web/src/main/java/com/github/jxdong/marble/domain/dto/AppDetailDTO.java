@@ -7,12 +7,12 @@ import java.util.List;
 
 /**
  * 应用信息
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/11 12:58
  */
 public class AppDetailDTO extends BaseDTO{
 
-    //AppID-唯一
+
     private String code;
     private String name;
     private String description;
@@ -24,7 +24,9 @@ public class AppDetailDTO extends BaseDTO{
     private String marbleVersion;
     //app下的主机信息
     private List<ServerDetail> hosts;
-
+    private String soaServiceName;
+    //SOA服务namespace
+    private String soaServiceNameSpace;
     public AppDetailDTO(){
 
     }
@@ -42,6 +44,22 @@ public class AppDetailDTO extends BaseDTO{
 
     public void setMarbleVersion(String marbleVersion) {
         this.marbleVersion = marbleVersion;
+    }
+
+    public String getSoaServiceName() {
+        return soaServiceName;
+    }
+
+    public void setSoaServiceName(String soaServiceName) {
+        this.soaServiceName = soaServiceName;
+    }
+
+    public String getSoaServiceNameSpace() {
+        return soaServiceNameSpace;
+    }
+
+    public void setSoaServiceNameSpace(String soaServiceNameSpace) {
+        this.soaServiceNameSpace = soaServiceNameSpace;
     }
 
     public String getCode() {

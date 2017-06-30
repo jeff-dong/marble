@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.jxdong.marble.infrastructure.repositories.mapper.mysql.SchedMapper">
+
+    <resultMap id="SchedRM" type="com.github.jxdong.marble.domain.model.SchedulerDetail">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="version"/>
+        <association property="appDetail" javaType="com.github.jxdong.marble.domain.model.AppDetail">
+            <result column="appCode" jdbcType="VARCHAR" property="code"/>
+        </association>
+        <!--<collection property="serverDetails" resultMap="ServerRM"/>-->
+    </resultMap>
+
+    <resultMap id="ServerRM" type="com.github.jxdong.marble.domain.model.ServerDetail">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="appCode" jdbcType="VARCHAR" property="appCode"/>
+        <result column="schedName" jdbcType="VARCHAR" property="schedName"/>
+        <result column="serverIp" jdbcType="VARCHAR" property="ip"/>
+        <result column="serverPort" jdbcType="INTEGER" property="port"/>
+    </resultMap>
+
+    <resultMap id="JobRM" type="com.github.jxdong.marble.domain.model.JobDetail">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="jobName" jdbcType="VARCHAR" property="name"/>
+        <result column="jobDesc" jdbcType="VARCHAR" property="description"/>
+        <result column="jobStatus" jdbcType="INTEGER" property="status"/>
+        <result column="cronExpress" jdbcType="VARCHAR" property="cronExpress"/>
+        <result column="jobParam" jdbcType="VARCHAR" property="param"/>
+        <result column="nextFireTime" jdbcType="TIMESTAMP" property="nextFireTime"/>
+        <result column="prevFireTime" jdbcType="TIMESTAMP" property="prevFireTime"/>
+        <result column="startTime" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="endTime" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="version"/>
+    </resultMap>
+
+    <sql id="Job_Columns">
+        msj.id,
+        msj.app_code,
+        msj.sched_name,
+        msj.name,
+        msj.description,
+        msj.status,
+        msj.cron_express as cronExpress,
+        msj.param as jobParam,
+        msj.next_fire_time as nextFireTime,
+        msj.prev_fire_time as prevFireTime,
+        msj.start_time,
+        msj.end_time,
+        msj.misfire_strategy,
+        msj.createTime,
+        msj.dataChange_lastTime
+    </sql>
+
+    <select id="selectAppSched" resultMap="SchedRM">
+        SELECT
+            masc.id,
+            masc.app_code as appCode,
+            masc.`name`,
+            masc.description,
+            masc.status,
+            masc.createTime,
+            masc.dataChange_lastTime
+        FROM
+          marble_app_sched masc
+        WHERE
+        TRUE
+        <if test="appCode != null and appCode !=''">
+            AND masc.app_code = #{appCode, jdbcType=VARCHAR}
+        </if>
+        <if test="schedName != null and schedName !=''">
+            AND masc.`name` = #{schedName, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="selectSchedServer" resultMap="ServerRM">
+        SELECT
+            mss.id,
+            mss.app_code as appCode,
+            mss.server_ip as serverIp,
+            mss.server_port as serverPort,
+            mss.sched_name as schedName,
+            mss.createTime,
+            mss.dataChange_lastTime
+        FROM
+          marble_server_sched mss
+        WHERE
+          TRUE
+         <if test="appCode != null and appCode !=''">
+            AND mss.app_code = #{appCode, jdbcType=VARCHAR}
+         </if>
+         <if test="schedName != null and schedName !=''">
+            AND mss.`sched_name` = #{schedName, jdbcType=VARCHAR}
+         </if>
+         <if test="serverPort != null and serverPort>0">
+            AND mss.`server_port` = #{serverPort, jdbcType=INTEGER}
+         </if>
+         <if test="serverIp != null and serverIp !=''">
+            AND mss.`server_ip` = #{serverIp, jdbcType=VARCHAR}
+         </if>
+    </select>
+
+    <insert id="insertAppSched" parameterType="com.github.jxdong.marble.domain.model.SchedulerDetail">
+        INSERT INTO marble_app_sched
+        (`app_code`,
+        `name`,
+        `description`,
+        `status`,
+        createTime, dataChange_lastTime)
+        VALUES (
+            #{appDetail.code,jdbcType=VARCHAR},
+            #{name,jdbcType=VARCHAR},
+            #{description,jdbcType=VARCHAR},
+            #{status,jdbcType=INTEGER}, now(), now())
+    </insert>
+
+    <insert id="insertServerSched" parameterType="com.github.jxdong.marble.domain.model.ServerDetail">
+        INSERT INTO marble_server_sched
+        (`app_code`,
+        `server_ip`,
+        `server_port`,
+        `sched_name`,
+        createTime, dataChange_lastTime)
+        VALUES (
+        #{appCode,jdbcType=VARCHAR},
+        #{ip,jdbcType=VARCHAR},
+        #{port,jdbcType=INTEGER},
+        #{schedName,jdbcType=VARCHAR},
+        now(), now())
+    </insert>
+
+    <delete id="deleteSchedById">
+        DELETE FROM marble_app_sched
+        WHERE `id` = #{id, jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteSchedServerById">
+        DELETE FROM marble_server_sched
+        WHERE `id` = #{id, jdbcType=INTEGER}
+    </delete>
+</mapper>

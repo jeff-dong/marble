@@ -3,7 +3,7 @@ package com.github.jxdong.marble.domain.dto;
 import java.util.List;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/12/1 16:47
  */
 public class CronExpressDTO extends BaseDTO{

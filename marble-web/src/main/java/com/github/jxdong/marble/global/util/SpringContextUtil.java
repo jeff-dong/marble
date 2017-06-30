@@ -1,7 +1,7 @@
 package com.github.jxdong.marble.global.util;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/8/18 13:22
  */
 import org.springframework.beans.BeansException;

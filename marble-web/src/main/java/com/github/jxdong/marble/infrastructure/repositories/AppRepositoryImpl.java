@@ -1,16 +1,16 @@
 package com.github.jxdong.marble.infrastructure.repositories;
 
-import com.github.jxdong.common.util.StringUtils;
 import com.github.jxdong.marble.domain.model.AppDetail;
-import com.github.jxdong.marble.domain.model.Page;
 import com.github.jxdong.marble.domain.model.Result;
 import com.github.jxdong.marble.domain.model.ServerDetail;
+import com.github.jxdong.marble.common.util.StringUtils;
 import com.github.jxdong.marble.domain.model.enums.AppStatusEnum;
 import com.github.jxdong.marble.domain.model.enums.ServerStatusEnum;
 import com.github.jxdong.marble.domain.repositories.AppRepository;
 import com.github.jxdong.marble.global.util.SqlErrorUtil;
 import com.github.jxdong.marble.infrastructure.repositories.mapper.mysql.AppMapper;
 import com.github.jxdong.marble.infrastructure.service.QuartzManager;
+import com.github.jxdong.marble.domain.model.Page;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/14 14:18
  */
 @Repository
@@ -144,6 +144,13 @@ public class AppRepositoryImpl implements AppRepository {
             if (StringUtils.isNotBlank(appDetail.getOwner())) {
                 app.setOwner(appDetail.getOwner());
             }
+            if (appDetail.getSoaServiceName()!=null) {
+                app.setSoaServiceName(appDetail.getSoaServiceName());
+            }
+            if (appDetail.getSoaServiceNameSpace()!=null) {
+                app.setSoaServiceNameSpace(appDetail.getSoaServiceNameSpace());
+            }
+
             int ret = appMapper.updateAppById(app);
             logger.info("Update app info end. affected records:{}", ret);
 
@@ -222,10 +229,10 @@ public class AppRepositoryImpl implements AppRepository {
             logger.info("delete ({}) App Scheduler records from DB", ret);
             //3、删除应用下服务器信息。marble_app_server
             ret = appMapper.deleteAppServerByAppCode(appCode);
-            logger.info("delete ({}) App MarbleServerInfo records from DB", ret);
+            logger.info("delete ({}) App Server records from DB", ret);
             //4、删除计划任务下服务器信息。marble_server_sched
             ret = appMapper.deleteAppShedServerByAppCode(appCode);
-            logger.info("delete ({}) App Sched MarbleServerInfo records from DB", ret);
+            logger.info("delete ({}) App Sched Server records from DB", ret);
 
             //5、停止应用下所有Job
             Result result = quartzManager.removeJob(appCode, null, null);

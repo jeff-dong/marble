@@ -1,12 +1,12 @@
 package com.github.jxdong.marble.domain.model;
 
-import com.github.jxdong.common.util.ArrayUtils;
+import com.github.jxdong.marble.common.util.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/6/29 14:45
  */
 public class JobLogRequest extends DatatablesRequest{
@@ -17,7 +17,8 @@ public class JobLogRequest extends DatatablesRequest{
     private String serverInfo;
     private String beginDate;
     private String endDate;
-    private int resultCode;
+    private int reqResultCode;
+    private int execResultCode;
 
     //获得排序列信息e.g: order by orderId asc.目前只支持单列排序
     public String getOrderColumn(){
@@ -29,21 +30,29 @@ public class JobLogRequest extends DatatablesRequest{
                 switch (columnIndex){
                     case "1":column = "sched_name"; break;
                     case "2":column = "job_name"; break;
-                    case "4":column = "server_info"; break;
-                    case "5":column = "dataChange_lastTime"; break;
-
+                    case "3":column = "request_no"; break;
+                    case "5":column = "server_info"; break;
+                    case "9":column = "createTime"; break;
                 }
             }
         }
         return column;
     }
 
-    public int getResultCode() {
-        return resultCode;
+    public int getReqResultCode() {
+        return reqResultCode;
     }
 
-    public void setResultCode(int resultCode) {
-        this.resultCode = resultCode;
+    public void setReqResultCode(int reqResultCode) {
+        this.reqResultCode = reqResultCode;
+    }
+
+    public int getExecResultCode() {
+        return execResultCode;
+    }
+
+    public void setExecResultCode(int execResultCode) {
+        this.execResultCode = execResultCode;
     }
 
     public String getBeginDate() {

@@ -1,13 +1,13 @@
 package com.github.jxdong.marble.domain.model;
 
 
-import com.github.jxdong.common.util.ArrayUtils;
+import com.github.jxdong.marble.common.util.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/1/14 13:17
  */
 public class DatatablesRequest {
@@ -55,7 +55,17 @@ public class DatatablesRequest {
     }
 
     //从search中取得，没有返回-1
-    public int getPrimaryKey() {
+    public String getPrimaryKey() {
+        if(this.getSearch() != null && StringUtils.isNotBlank(this.getSearch().getValue())){
+            try{
+                return String.valueOf(this.getSearch().getValue());
+            }catch (Exception e){}
+        }
+        return null;
+    }
+
+    //从search中取得，没有返回-1
+    public int getIntPrimaryKey() {
         if(this.getSearch() != null && StringUtils.isNotBlank(this.getSearch().getValue())){
             try{
                 return Integer.valueOf(this.getSearch().getValue());
@@ -63,6 +73,7 @@ public class DatatablesRequest {
         }
         return -1;
     }
+
 
     public void setPage(Page page) {
         this.page = page;

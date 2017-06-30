@@ -3,6 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/context
@@ -12,9 +13,17 @@
 
     <!-- 启动扫描所有的controller -->
     <context:component-scan base-package="com.github.jxdong.marble"/>
-
     <!-- enable auto-wired -->
     <context:annotation-config/>
+
+    <!-- DB配置 -->
+
+    <bean id="dataSourceMySQL" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+          p:url="jdbc:mysql://localhost:3306/marble?allowMultiQueries=true&amp;useUnicode=true&amp;characterEncoding=utf8">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="username" value="root"/>
+        <property name="password" value="mySql密码"/>
+    </bean>
 
     <import resource="classpath:datasource-mysql.xml"/>
     <import resource="classpath:spring-quartz.xml"/>
@@ -63,7 +72,9 @@
     </bean>
 
     <bean id="exceptionResolver" class="com.github.jxdong.marble.global.exception.MarbleExceptionHandler">
-        <property name="defaultErrorView" value="error.ftl"/>
+        <property name="defaultErrorView">
+            <value>error.ftl</value>
+        </property>
     </bean>
 
     <!-- Spring MVC拦截器，负责登陆验证+恶意请求校验-->

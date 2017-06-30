@@ -1,6 +1,6 @@
 package com.github.jxdong.marble.global.util;
 
-import com.github.jxdong.common.util.ArrayUtils;
+import com.github.jxdong.marble.common.util.ArrayUtils;
 import com.github.jxdong.marble.domain.dto.BaseDTO;
 import com.github.jxdong.marble.domain.model.Entity;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * 将内部的entity转化为DTO供网络传输
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/6/26 9:19
  */
 public class DTOConvert {

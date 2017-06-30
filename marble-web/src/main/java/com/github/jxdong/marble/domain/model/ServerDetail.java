@@ -1,10 +1,10 @@
 package com.github.jxdong.marble.domain.model;
 
-import com.github.jxdong.common.util.StringUtils;
+import com.github.jxdong.marble.common.util.StringUtils;
 
 /**
  * 主机信息
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/11 13:01
  */
 public class ServerDetail extends Entity{
@@ -16,6 +16,13 @@ public class ServerDetail extends Entity{
     private String description;
     private int status;
     private int port;
+    public ServerDetail(){
+
+    }
+    public ServerDetail(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
 
     private String schedName;
 

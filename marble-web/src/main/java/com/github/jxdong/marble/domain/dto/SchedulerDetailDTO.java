@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * 应用信息
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/11 12:58
  */
 public class SchedulerDetailDTO extends BaseDTO{

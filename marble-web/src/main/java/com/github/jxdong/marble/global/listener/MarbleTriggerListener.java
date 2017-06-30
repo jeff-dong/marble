@@ -5,7 +5,7 @@ import org.quartz.Trigger;
 import org.quartz.TriggerListener;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/12/30 13:01
  */
 public class MarbleTriggerListener implements TriggerListener{

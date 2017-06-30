@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.jxdong.marble.infrastructure.repositories.mapper.mysql.ConfigureMapper">
+
+    <resultMap id="ConfigureRM" type="com.github.jxdong.marble.domain.model.Configure">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="dataChange_lastTime" jdbcType="TIMESTAMP" property="version"/>
+    </resultMap>
+
+    <sql id="Configure_Column_List">
+        con.id, con.group, con.key, con.value, con.description, con.createTime, con.dataChange_lastTime
+    </sql>
+
+    <select id="selectConfigureById" resultMap="ConfigureRM">
+        SELECT
+        <include refid="Configure_Column_List"/>
+        FROM marble_configure con
+        WHERE con.id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectConfigureByMultiConditions" parameterType="java.util.HashMap" resultMap="ConfigureRM">
+        SELECT
+        <include refid="Configure_Column_List"/>
+        FROM marble_configure con
+        WHERE
+        TRUE
+        <if test="groups != null and groups.length>0 ">
+            AND con.group in
+            <foreach item="item" index="index" collection="groups" open="(" separator="," close=")">
+                #{item,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="keys != null and keys.length>0 ">
+            AND con.key in
+            <foreach item="item" index="index" collection="keys" open="(" separator="," close=")">
+                #{item,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="orderColumn != null">
+            ORDER BY con.${orderColumn}
+            <if test="orderDir != null">
+                ${orderDir}
+            </if>
+        </if>
+    </select>
+
+    <delete id="deleteConfigureById">
+        DELETE FROM marble_configure
+        WHERE id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insertConfigure" parameterType="com.github.jxdong.marble.domain.model.Configure">
+        INSERT INTO marble_configure
+        (`group`,
+         `key`,
+         `value`,
+         `description`,
+         createTime, dataChange_lastTime)
+        VALUES (#{group,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR},
+                #{value,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, now(), now())
+    </insert>
+
+    <update id="updateConfigureById" parameterType="com.github.jxdong.marble.domain.model.Configure">
+        UPDATE marble_configure con
+        <set>
+            <if test="value != null">
+                con.value = #{value,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                con.description = #{description,jdbcType=VARCHAR},
+            </if>
+            con.dataChange_lastTime = now()
+        </set>
+        WHERE con.id = #{id,jdbcType=INTEGER} and con.dataChange_lastTime = #{version, jdbcType=TIMESTAMP}
+    </update>
+
+</mapper>

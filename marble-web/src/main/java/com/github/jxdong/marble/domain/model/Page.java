@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 对分页的基本数据进行一个简单的封装
@@ -18,7 +19,7 @@ public class Page<T>{
     private int totalRecord;// 总记录数
     private int totalPage = 1;// 总页数
     private List<T> results;// 对应的当前页记录
-    private Map<String, Object> params = new HashMap<String, Object>();// 其他的参数我们把它分装成一个Map对象
+    private Map<String, Object> params = new ConcurrentHashMap<>();// 其他的参数我们把它分装成一个Map对象
 
     public void setStartOffset(int startOffset) {
         this.startOffset = startOffset;
@@ -37,6 +38,14 @@ public class Page<T>{
         }else {
             return 1;
         }
+    }
+
+    public Page() {
+    }
+
+    public Page(int currentPage, int pageSize) {
+        this.currentPage = currentPage;
+        this.pageSize = pageSize;
     }
 
     public void setCurrentPage(int currentPage) {

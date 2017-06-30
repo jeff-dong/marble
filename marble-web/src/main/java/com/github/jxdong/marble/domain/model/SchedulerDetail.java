@@ -1,7 +1,7 @@
 package com.github.jxdong.marble.domain.model;
 
-import com.github.jxdong.common.util.ArrayUtils;
-import com.github.jxdong.common.util.StringUtils;
+import com.github.jxdong.marble.common.util.ArrayUtils;
+import com.github.jxdong.marble.common.util.StringUtils;
 import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * 计划任务信息
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/11 13:03
  */
 public class SchedulerDetail extends Entity{

@@ -1,12 +1,12 @@
 package com.github.jxdong.marble.domain.model;
 
-import com.github.jxdong.common.util.ArrayUtils;
+import com.github.jxdong.marble.common.util.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/6/29 14:45
  */
 public class ConfigureRequest extends DatatablesRequest{

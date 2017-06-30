@@ -1,8 +1,9 @@
 package com.github.jxdong.marble.global.util;
 
+import com.github.jxdong.marble.common.util.CommonUtil;
 import com.github.jxdong.marble.domain.model.AppDetail;
 import com.github.jxdong.marble.domain.model.Configure;
-import com.github.jxdong.marble.domain.model.LoginAccount;
+import com.github.jxdong.marble.domain.model.Account;
 import com.github.jxdong.marble.domain.model.enums.ConfigureEnum;
 import com.github.jxdong.marble.domain.model.enums.ErrorEnum;
 import com.github.jxdong.marble.domain.repositories.AppRepository;
@@ -15,46 +16,24 @@ import org.slf4j.LoggerFactory;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/7/2 14:49
  */
 public class AuthorityUtil {
     private static Logger logger = LoggerFactory.getLogger(AuthorityUtil.class);
 
-    //TODO 改为自己的登录方式，此处写死
-    public LoginAccount getLoginedAccount() {
-        LoginAccount account = new LoginAccount();
+    public Account getLoginedAccount() {
+        Account account = new Account();
+        account.setName("超级用户");
         account.setEmployee("A00001");
-        account.setName("Jeff Dong");
+        account.setMail("100@100.com");
+        account.setDisplayName("超级用户");
+        account.setDistinguishedName("超级用户");
         account.setHasAdminRole(true);
         return account;
-    }
-
-    //得到admin列表
-    public Set<String> getAdminList() {
-        Set<String> admins = new HashSet<>();
-        if (adminList == null || adminList.size() == 0) {
-            //DB中查询
-            ConfigureRepository confRes = (ConfigureRepository) SpringContextUtil.getBean("configureRepositoryImpl");
-            List<Configure> configureList = confRes.queryConfigureMultiConditions(new String[]{ConfigureEnum.Group.USER_ROLE.getCode()}, new String[]{ConfigureEnum.ROLE_ADMIN.getCode()}, null, null, null);
-            if (configureList != null && configureList.size() == 1) {
-                String adminStr = configureList.get(0).getValue();
-                if (StringUtils.isNotBlank(adminStr)) {
-                    String[] adminArray = adminStr.split(";");
-                    for (String str : adminArray) {
-                        admins.add(str.toUpperCase());
-                    }
-                }
-            }
-        }
-        admins.add("A00001");
-        return admins;
     }
 
     /**
@@ -65,7 +44,7 @@ public class AuthorityUtil {
      */
 
     public boolean validateAuthority(String appCode) throws MarbleException {
-        LoginAccount account = getLoginedAccount();
+        Account account = getLoginedAccount();
         if (account == null || StringUtils.isBlank(account.getEmployee())) {
             logger.warn("Validate failed. The param is invalid. employee:{}", account);
             throw new MarbleException(ErrorEnum.ILLEGAL_ARGUMENT, "");
@@ -82,11 +61,16 @@ public class AuthorityUtil {
             throw new MarbleException(ErrorEnum.ILLEGAL_ARGUMENT, "Cannot find the App with code-" + appCode);
         }
 
-        if (employeeID.equals(app.getOwner())) {
-            return true;
-        } else {
-            throw new MarbleException(ErrorEnum.NO_PERMISSION, "");
+        String owners = app.getOwner();
+        if (com.github.jxdong.marble.common.util.StringUtils.isNotBlank(owners)) {
+            String[] ownerArray = owners.split(";");
+            for (String str : ownerArray) {
+                if (employeeID.equalsIgnoreCase(str)) {
+                    return true;
+                }
+            }
         }
+        throw new MarbleException(ErrorEnum.NO_PERMISSION, "");
     }
 
     //取得本机IP
@@ -101,7 +85,7 @@ public class AuthorityUtil {
                 while (addresses.hasMoreElements()) {
                     ip = (InetAddress) addresses.nextElement();
                     if (ip != null && ip instanceof Inet4Address) {
-                        if(!"127.0.0.1".equals(ip.getHostAddress())){
+                        if (!"127.0.0.1".equals(ip.getHostAddress())) {
                             ipAddress = ip.getHostAddress();
                             logger.info("IP address :{}", ip.getHostAddress());
                         }
@@ -121,15 +105,12 @@ public class AuthorityUtil {
     }
 
     //单例模式实现
-    private static class SingletonHolder {
+    private static class SigletonHolder {
         private static final AuthorityUtil instance = new AuthorityUtil();
     }
 
-    private AuthorityUtil(){
-    }
-
-    public static AuthorityUtil getInstance() {
-        return SingletonHolder.instance;
+    public static final AuthorityUtil getInstance() {
+        return SigletonHolder.instance;
     }
 
     private Set<String> adminList;

@@ -1,10 +1,10 @@
 package com.github.jxdong.marble.global.exception;
 
-import com.github.jxdong.common.util.StringUtils;
+import com.github.jxdong.marble.common.util.StringUtils;
 import com.github.jxdong.marble.domain.model.enums.ErrorEnum;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/25 15:46
  */
 public class MarbleException extends Exception {
@@ -13,6 +13,18 @@ public class MarbleException extends Exception {
     protected String message;
 
     public MarbleException() {
+    }
+
+    public static void checkArgument(boolean expression, Object errorMessage) throws MarbleException {
+        if(expression) {
+            throw new MarbleException(ErrorEnum.ILLEGAL_ARGUMENT, StringUtils.safeString(errorMessage));
+        }
+    }
+
+    public static void check(boolean expression, ErrorEnum codeEnum) throws MarbleException {
+        if(expression) {
+            throw new MarbleException(codeEnum.getMessage()+"("+codeEnum.getCode()+")");
+        }
     }
 
     public MarbleException(String message) {

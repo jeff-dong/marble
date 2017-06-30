@@ -1,0 +1,7 @@
+#模块划分
+marble-agent: 客户端代理，可单独打包到中央仓库
+marble-common: 放置公共的类
+marble-contract: 放置契约信息，目前空置
+marble-web: 主模块，包含offline和调度中心
+
+

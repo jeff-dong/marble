@@ -1,16 +1,17 @@
 package com.github.jxdong.marble.infrastructure.service;
 
-import com.github.jxdong.common.util.ArrayUtils;
-import com.github.jxdong.common.util.CommonUtil;
-import com.github.jxdong.common.util.JacksonUtil;
-import com.github.jxdong.common.util.StringUtils;
-import com.github.jxdong.marble.domain.model.MarbleJobInfo;
+import com.github.jxdong.marble.common.util.ArrayUtils;
+import com.github.jxdong.marble.common.util.CommonUtil;
+import com.github.jxdong.marble.common.util.JacksonUtil;
+import com.github.jxdong.marble.common.util.StringUtils;
 import com.github.jxdong.marble.domain.model.MarbleJobProxy;
-import com.github.jxdong.marble.domain.model.MarbleServerInfo;
 import com.github.jxdong.marble.domain.model.Result;
 import com.github.jxdong.marble.domain.model.enums.MisfireInstructionEnum;
 import com.github.jxdong.marble.global.listener.MarbleJobListener;
+import com.github.jxdong.marble.domain.model.JobBasicInfo;
+import com.github.jxdong.marble.agent.common.server.thrift.ThriftConnectInfo;
 import org.quartz.*;
+import org.quartz.JobDetail;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ import java.util.*;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/12/22 20:05
  */
 @Component
@@ -100,8 +101,10 @@ public class QuartzManager {
                          String cronExpress,
                          int misFireStrategy,
                          String param,
-                         List<MarbleServerInfo> serverList,
-                         String marbleVersion) {
+                         List<ThriftConnectInfo.Server> serverList,
+                         String marbleVersion,
+                         boolean isSync,
+                         Long maxWaitTime) {
         Result result = validateArguments(appCode, schedName, jobName);
         if (!result.isSuccess()) {
             return result;
@@ -115,6 +118,9 @@ public class QuartzManager {
         if (!MisfireInstructionEnum.containItem(misFireStrategy)) {
             return Result.FAILURE("MisFire策略不合法");
         }
+        if(isSync && (maxWaitTime==null || maxWaitTime <= 0)){
+            return Result.FAILURE("同步类型的JOB必须填写'最大等待时间'");
+        }
 
         try {
             //创建Job Detail
@@ -125,8 +131,9 @@ public class QuartzManager {
             } else {
                 jobDetail = JobBuilder.newJob(MarbleJobProxy.class).withIdentity(jobName, jobGroupName).withDescription(jobDesc).storeDurably(true).build();
             }
-            //Job将信息填入Data Map
-            jobDetail.getJobDataMap().put("MARBLE_JOB_INFO", JacksonUtil.obj2json(new MarbleJobInfo(appCode, schedName, jobName, jobDesc, cronExpress, param, marbleVersion, serverList)));
+            //Job将连接信息填入Data Map
+            jobDetail.getJobDataMap().put("THRIFT_CONNECT_INFO", JacksonUtil.obj2json(new ThriftConnectInfo(appCode, schedName, jobName, serverList)));
+            jobDetail.getJobDataMap().put("JOB_INFO", JacksonUtil.obj2json(new JobBasicInfo(appCode, schedName, jobName, jobDesc, cronExpress, param, marbleVersion, isSync, maxWaitTime)));
 
             //创建Trigger
             String triggerGroupName = genTriggerGroupName(appCode, schedName);
@@ -153,7 +160,7 @@ public class QuartzManager {
     }
 
     //根据cron表达式+misfire策略生成builder
-    private CronScheduleBuilder genCronScheduleBuilder(String cronExpress, int misFireStrategy) {
+    private CronScheduleBuilder genCronScheduleBuilder(String cronExpress, int misFireStrategy){
         CronScheduleBuilder cronScheduleBuilder;
         switch (misFireStrategy) {
             case 1:
@@ -168,7 +175,6 @@ public class QuartzManager {
         }
         return cronScheduleBuilder;
     }
-
     /**
      * 删除Job
      * 如果appCode+schedulerName+jobName都不空，根据三者查询job
@@ -182,7 +188,7 @@ public class QuartzManager {
      */
     @Transactional
     public Result removeJob(String appCode, String schedName, String jobName) {
-        if (StringUtils.isBlank(appCode)) {
+        if(StringUtils.isBlank(appCode)){
             return Result.FAILURE("App Code 不能为空");
         }
         Set<JobKey> jobKeySet = new HashSet<>();
@@ -193,9 +199,9 @@ public class QuartzManager {
             if (StringUtils.isNotBlank(schedName) && StringUtils.isNotBlank(jobName)) {
                 jobKeySet.add(new JobKey(jobName, genJobGroupName(appCode, schedName)));
                 //根据appCode + schedulerName查找
-            } else if (StringUtils.isNotBlank(schedName)) {
+            } else if(StringUtils.isNotBlank(schedName)){
                 jobKeySet = marbleScheduler.getJobKeys(GroupMatcher.<JobKey>groupEquals(genJobGroupName(appCode, schedName)));
-            } else {
+            } else{
                 jobKeySet = marbleScheduler.getJobKeys(GroupMatcher.jobGroupStartsWith(appCode + "-"));
             }
 
@@ -365,7 +371,7 @@ public class QuartzManager {
     //修改app下的所有job的marble版本号信息
     @Transactional
     public Result modifyJobMarbleVersion(String appCode, String newMarbleVersion) {
-        if (StringUtils.isBlank(appCode) || StringUtils.isBlank(newMarbleVersion)) {
+        if(StringUtils.isBlank(appCode) || StringUtils.isBlank(newMarbleVersion)){
             return Result.FAILURE("参数非法");
         }
         logger.info("Modify marble version of jobs under appCode-{}", appCode);
@@ -377,6 +383,7 @@ public class QuartzManager {
                 for (JobKey jobKey : jobKeySet) {
                     JobDetail oldJobDetail = marbleScheduler.getJobDetail(jobKey);
                     updateJobInfo2DataMap(oldJobDetail.getJobDataMap(), null, null, newMarbleVersion);
+                    System.out.println("33" + oldJobDetail.getJobDataMap().get("JOB_INFO"));
                     marbleScheduler.addJob(oldJobDetail, true);
                 }
             }
@@ -440,10 +447,10 @@ public class QuartzManager {
                 if (oldTrigger == null || !(oldTrigger instanceof CronTrigger)) {
                     logger.warn("Can not find the cron trigger with key: {}", triggerKey);
                 } else {
-                    if ((newCron != null && !newCron.equals(((CronTrigger) oldTrigger).getCronExpression())) || newMisFireStrategy != oldTrigger.getMisfireInstruction()) {
+                    if ((newCron!=null && !newCron.equals(((CronTrigger) oldTrigger).getCronExpression())) || newMisFireStrategy != oldTrigger.getMisfireInstruction()) {
                         Trigger newTrigger = TriggerBuilder.newTrigger().
                                 withIdentity(genTriggerNameForJob(jobName), genTriggerGroupName(appCode, schedName)).
-                                withSchedule(genCronScheduleBuilder(newCron, (newMisFireStrategy != 0 ? newMisFireStrategy : oldTrigger.getMisfireInstruction()))).build();
+                                withSchedule(genCronScheduleBuilder(newCron, (newMisFireStrategy!=0?newMisFireStrategy:oldTrigger.getMisfireInstruction()))).build();
 
                         marbleScheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
                         //marbleScheduler.pauseJob(newJobDetail.getKey());
@@ -467,31 +474,31 @@ public class QuartzManager {
     }
 
     //更新JobDataMap中的job-info信息
-    private void updateJobInfo2DataMap(JobDataMap jobDataMap, String newCron, String newParam, String newMarbleVersion) {
-        if (jobDataMap != null) {
-            if (jobDataMap.get("JOB_INFO") != null) {
-                MarbleJobInfo marbleJobInfo = JacksonUtil.json2pojo(jobDataMap.get("MARBLE_JOB_INFO").toString(), MarbleJobInfo.class);
-                if (marbleJobInfo != null) {
+    private void updateJobInfo2DataMap(JobDataMap jobDataMap, String newCron, String newParam, String newMarbleVersion){
+        if(jobDataMap != null){
+            if(jobDataMap.get("JOB_INFO") != null){
+                JobBasicInfo jobBasicInfo = JacksonUtil.json2pojo(jobDataMap.get("JOB_INFO").toString(), JobBasicInfo.class);
+                if (jobBasicInfo != null) {
                     //更新job参数
-                    if (StringUtils.isNotBlank(newParam) && !newParam.equals(marbleJobInfo.getJobParam())) {
-                        logger.info("Update the param of job({}) from {} to {}", marbleJobInfo.getJobName(), marbleJobInfo.getJobParam(), newParam);
-                        marbleJobInfo.setJobParam(newParam);
+                    if(!StringUtils.isStringEqual(newParam,jobBasicInfo.getParam())){
+                        logger.info("Update the param of job({}) from {} to {}",jobBasicInfo.getJobName(), jobBasicInfo.getParam(), newParam);
+                        jobBasicInfo.setParam(newParam);
                     }
 
                     //更新Cron表达式
-                    if (StringUtils.isNotBlank(newCron) && !newCron.equals(marbleJobInfo.getJobCronExpress()) && CronExpression.isValidExpression(newCron)) {
-                        logger.info("Update the Cron Express of job({}) from {} to {}", marbleJobInfo.getJobName(), marbleJobInfo.getJobCronExpress(), newCron);
-                        marbleJobInfo.setJobCronExpress(newCron);
+                    if(StringUtils.isNotBlank(newCron) && !newCron.equals(jobBasicInfo.getJobCronExpress()) && CronExpression.isValidExpression(newCron)){
+                        logger.info("Update the Cron Express of job({}) from {} to {}",jobBasicInfo.getJobName(), jobBasicInfo.getJobCronExpress(), newCron);
+                        jobBasicInfo.setJobCronExpress(newCron);
                     }
 
                     //更新Marble版本号
-                    if (StringUtils.isNotBlank(newMarbleVersion) && !newMarbleVersion.equals(marbleJobInfo.getMarbleVersion())) {
-                        logger.info("Update the MarbleVersion of job({}) from {} to {}", marbleJobInfo.getJobName(), marbleJobInfo.getMarbleVersion(), newMarbleVersion);
-                        marbleJobInfo.setMarbleVersion(newMarbleVersion);
+                    if(StringUtils.isNotBlank(newMarbleVersion) && !newMarbleVersion.equals(jobBasicInfo.getMarbleVersion())){
+                        logger.info("Update the MarbleVersion of job({}) from {} to {}",jobBasicInfo.getJobName(), jobBasicInfo.getMarbleVersion(), newMarbleVersion);
+                        jobBasicInfo.setMarbleVersion(newMarbleVersion);
                     }
                     try {
-                        jobDataMap.put("MARBLE_JOB_INFO", JacksonUtil.obj2json(marbleJobInfo));
-                    } catch (Exception e) {
+                        jobDataMap.put("JOB_INFO", JacksonUtil.obj2json(jobBasicInfo));
+                    }catch (Exception e){
                         logger.error("Update the JOB-INFO of data map exception. ", e);
                     }
                 }
@@ -499,7 +506,6 @@ public class QuartzManager {
 
         }
     }
-
     /**
      * 删除AppCode下所有Job的连接信息（以IP区分）。如果connectInfo为空，则意味着删除
      *
@@ -519,10 +525,10 @@ public class QuartzManager {
                     JobDetail jobDetail = marbleScheduler.getJobDetail(jobKey);
                     if (jobDetail != null) {
                         JobDataMap dataMap = jobDetail.getJobDataMap();
-                        if (dataMap != null && dataMap.get("MARBLE_JOB_INFO") != null) {
-                            MarbleJobInfo marbleJobInfo = JacksonUtil.json2pojo(dataMap.get("MARBLE_JOB_INFO").toString(), MarbleJobInfo.class);
-                            if (marbleJobInfo != null && ArrayUtils.listIsNotBlank(marbleJobInfo.getServerInfoList())) {
-                                Iterator<MarbleServerInfo> iterator = marbleJobInfo.getServerInfoList().iterator();
+                        if (dataMap != null && dataMap.get("THRIFT_CONNECT_INFO") != null) {
+                            ThriftConnectInfo connectInfo = JacksonUtil.json2pojo(dataMap.get("THRIFT_CONNECT_INFO").toString(), ThriftConnectInfo.class);
+                            if (connectInfo != null && ArrayUtils.listIsNotBlank(connectInfo.getServerInfo())) {
+                                Iterator<ThriftConnectInfo.Server> iterator = connectInfo.getServerInfo().iterator();
                                 while (iterator.hasNext()) {
                                     if (ip.equals(iterator.next().getIp())) {
                                         iterator.remove();

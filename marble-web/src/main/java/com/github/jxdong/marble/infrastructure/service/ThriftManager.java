@@ -1,9 +1,11 @@
 package com.github.jxdong.marble.infrastructure.service;
 
-import com.github.jxdong.common.util.StringUtils;
+import com.github.jxdong.marble.common.util.StringUtils;
 import com.github.jxdong.marble.domain.model.Result;
-import com.github.jxdong.marble.entity.ClassInfo;
-import com.github.jxdong.marble.server.thrift.ThriftAuto;
+import com.github.jxdong.marble.domain.model.enums.JobReqStatusEnum;
+import com.github.jxdong.marble.global.util.SpringContextUtil;
+import com.github.jxdong.marble.agent.entity.ClassInfo;
+import com.github.jxdong.marble.agent.common.server.thrift.ThriftAuto;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TMultiplexedProtocol;
@@ -15,14 +17,14 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * Marble 2.0开始转移到Netty，请用NettyClientManager代替
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/10 9:21
  */
-@Deprecated
 public class ThriftManager implements RPCClientManager{
     private static final Logger logger = LoggerFactory.getLogger(ThriftManager.class);
     private static final int MAX_TRY_COUNT = 3;
@@ -52,12 +54,26 @@ public class ThriftManager implements RPCClientManager{
     }
 
     @Override
-    public Result serviceInvoke(String host, int port, Set<ClassInfo> classInfoSet) {
+    public Result serviceInvoke(String requestNo, String host, int port, Map<String, Object> data) {
+        return Result.FAILURE("此版本暂时不支持（请更新Marble到2.0以上）");
+    }
+
+    @Override
+    public Result serviceInvoke(String requestNo, String host, int port, Set<ClassInfo> classInfoSet, boolean isSync, Long maxWaitTime) {
         if(StringUtils.isBlank(host) || port<=0 || port>65535 || classInfoSet==null || classInfoSet.size()==0){
             return Result.FAILURE("参数非法");
         }
         ClassInfo classInfo= classInfoSet.iterator().next();
-        return connect2Server(host, port, classInfo.getClassName(), classInfo.getMathodParam(), 1);
+        Result result = connect2Server(host, port, classInfo.getClassName(), classInfo.getMathodParam(), 1);
+
+        LogManager logManager = (LogManager) SpringContextUtil.getBean("logManager");
+
+        int reqResCode = result.isSuccess()? JobReqStatusEnum.SUCCESS.getCode():JobReqStatusEnum.FAILURE.getCode();
+        String reqResMsg = result.isSuccess()? JobReqStatusEnum.SUCCESS.getDesc():JobReqStatusEnum.FAILURE.getDesc()+": "+ result.getResultMsg();
+
+        Result updateResult = logManager.updateExecuteResult(requestNo, reqResCode, reqResMsg, null, null, new Date());
+        logger.info("Thrift Update exec log result: {}", updateResult);
+        return result;
     }
 
     /**

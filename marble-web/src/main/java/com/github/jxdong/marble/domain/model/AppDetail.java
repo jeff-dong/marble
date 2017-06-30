@@ -4,12 +4,11 @@ import java.util.List;
 
 /**
  * 应用信息
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/11 12:58
  */
 public class AppDetail extends Entity{
 
-    //AppID
     private String code;
     private String name;
     private String description;
@@ -19,6 +18,10 @@ public class AppDetail extends Entity{
     private int status;
     //使用的marble版本号
     private String marbleVersion;
+    //SOA服务名
+    private String soaServiceName;
+    //SOA服务namespace
+    private String soaServiceNameSpace;
 
     //app下的主机信息
     private List<ServerDetail> hosts;
@@ -49,6 +52,22 @@ public class AppDetail extends Entity{
 
     public String getName() {
         return name;
+    }
+
+    public String getSoaServiceName() {
+        return soaServiceName;
+    }
+
+    public void setSoaServiceName(String soaServiceName) {
+        this.soaServiceName = soaServiceName;
+    }
+
+    public String getSoaServiceNameSpace() {
+        return soaServiceNameSpace;
+    }
+
+    public void setSoaServiceNameSpace(String soaServiceNameSpace) {
+        this.soaServiceNameSpace = soaServiceNameSpace;
     }
 
     public void setName(String name) {

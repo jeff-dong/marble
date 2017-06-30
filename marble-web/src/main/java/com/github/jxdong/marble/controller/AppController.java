@@ -1,7 +1,8 @@
 package com.github.jxdong.marble.controller;
 
-import com.github.jxdong.common.util.JacksonUtil;
-import com.github.jxdong.common.util.StringUtils;
+
+import com.github.jxdong.marble.common.util.JacksonUtil;
+import com.github.jxdong.marble.common.util.StringUtils;
 import com.github.jxdong.marble.domain.dto.AppDetailDTO;
 import com.github.jxdong.marble.domain.dto.ServerDetailDTO;
 import com.github.jxdong.marble.domain.model.*;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/6/26 8:40
  */
 @Controller @RequestMapping("/app")
@@ -53,7 +54,7 @@ public class AppController extends BasicController{
         }
         List<AppDetail> appDetails = new ArrayList<>();
         //如果appCode不为空，先根据appCode查询
-        if(request.getPrimaryKey()>0){
+        if(request.getIntPrimaryKey()>0){
             AppDetail appDetail = appRepository.queryAppByCode(String.valueOf(request.getPrimaryKey()));
             appDetails.add(appDetail);
             request.getPage().setTotalRecord(1);

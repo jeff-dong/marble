@@ -1,15 +1,15 @@
 package com.github.jxdong.marble.controller;
 
-import com.github.jxdong.common.util.JacksonUtil;
+import com.github.jxdong.marble.common.util.JacksonUtil;
 import com.github.jxdong.marble.domain.dto.ConfigureDTO;
-import com.github.jxdong.marble.domain.model.Configure;
-import com.github.jxdong.marble.domain.model.Response;
 import com.github.jxdong.marble.domain.model.enums.ErrorEnum;
 import com.github.jxdong.marble.domain.repositories.ConfigureRepository;
 import com.github.jxdong.marble.global.exception.MarbleException;
 import com.github.jxdong.marble.global.util.AuthorityUtil;
 import com.github.jxdong.marble.global.util.DTOConvert;
+import com.github.jxdong.marble.domain.model.Configure;
 import com.github.jxdong.marble.domain.model.ConfigureRequest;
+import com.github.jxdong.marble.domain.model.Response;
 import com.github.jxdong.marble.domain.model.Result;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/6/26 8:40
  */
 @Controller @RequestMapping("/configure")
@@ -66,8 +66,8 @@ public class ConfigureController extends BasicController{
 
         List<Configure> configureList = new ArrayList<>();
         //如果primary不为空，先根据primaryKey查询
-        if(request.getPrimaryKey() >0){
-            Configure configure = configureRepository.queryConfigureById(request.getPrimaryKey());
+        if(request.getIntPrimaryKey() >0){
+            Configure configure = configureRepository.queryConfigureById(request.getIntPrimaryKey());
             if(configure != null){
                 configureList.add(configure);
                 request.getPage().setTotalRecord(1);

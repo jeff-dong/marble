@@ -1,12 +1,13 @@
 package com.github.jxdong.marble.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.util.Map;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/8/26 14:48
  */
 public class Result {
@@ -15,7 +16,7 @@ public class Result {
     private int resultCode;
     private String resultMsg;
 
-    private Map<String ,Object> data;
+    private Map<String ,Object> otherInfo;
 
     public static Result SUCCESS(){
         Result result = new Result();
@@ -28,7 +29,7 @@ public class Result {
         Result result = new Result();
         result.setResultCode(0);
         result.setResultMsg("ok");
-        result.setData(data);
+        result.setOtherInfo(data);
         return result;
     }
 
@@ -44,18 +45,15 @@ public class Result {
     }
 
     public boolean isSuccess(){
-        if(this.resultCode == 0){
-            return true;
-        }
-        return false;
+        return this.resultCode == 0;
     }
 
-    public Map<String, Object> getData() {
-        return data;
+    public Map<String, Object> getOtherInfo() {
+        return otherInfo;
     }
 
-    public void setData(Map<String, Object> data) {
-        this.data = data;
+    public void setOtherInfo(Map<String, Object> otherInfo) {
+        this.otherInfo = otherInfo;
     }
 
     public void setResultCode(int resultCode) {
@@ -70,9 +68,9 @@ public class Result {
         this.resultMsg = resultMsg;
     }
 
+    @JsonIgnore
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("resultCode", resultCode).
-                append("resultMsg", resultMsg).append("data", data).toString();
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

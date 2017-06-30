@@ -3,10 +3,11 @@ package com.github.jxdong.marble.domain.repositories;
 import com.github.jxdong.marble.domain.model.Configure;
 import com.github.jxdong.marble.domain.model.Page;
 import com.github.jxdong.marble.domain.model.Result;
+
 import java.util.List;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/14 14:04
  */
 public interface ConfigureRepository extends Repository {

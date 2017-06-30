@@ -1,6 +1,6 @@
 package com.github.jxdong.marble.controller;
 
-import com.github.jxdong.marble.domain.model.LoginAccount;
+import com.github.jxdong.marble.domain.model.Account;
 import com.github.jxdong.marble.domain.model.Response;
 import com.github.jxdong.marble.domain.model.enums.ErrorEnum;
 import com.github.jxdong.marble.global.exception.MarbleException;
@@ -16,11 +16,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/6/25 14:26
  */
 public abstract class BasicController {
-    protected LoginAccount loginedAccount = null;
+    protected Account loginedAccount = null;
     protected HttpServletResponse httpResponse;
     protected HttpServletRequest httpRequest;
     protected HttpSession httpSession;
@@ -52,14 +52,14 @@ public abstract class BasicController {
 
     protected ModelAndView modelAndView(String page){
         if(StringUtils.isNotBlank(page)){
-            return new ModelAndView(page, "LoginAccount", AuthorityUtil.getInstance().getLoginedAccount());
+            return new ModelAndView(page, "Account", AuthorityUtil.getInstance().getLoginedAccount());
         }
         return errorModelAndView(Response.ResultCodeEnum.UNKNOWN_ERROR, "");
     }
 
     protected ModelAndView modelAndView(String page, Map<String, Object> data){
         if(StringUtils.isNotBlank(page) && data != null){
-            data.put("LoginAccount", AuthorityUtil.getInstance().getLoginedAccount());
+            data.put("Account", AuthorityUtil.getInstance().getLoginedAccount());
             return new ModelAndView(page, data);
         }
         return errorModelAndView(Response.ResultCodeEnum.UNKNOWN_ERROR, "");

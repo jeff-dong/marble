@@ -2,7 +2,7 @@ package com.github.jxdong.marble.domain.model.enums;
 
 /**
  * Configure表的Group分类enum
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/7/2 14:49
  */
 public enum ConfigureEnum {

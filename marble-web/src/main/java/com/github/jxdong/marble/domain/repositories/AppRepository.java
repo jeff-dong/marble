@@ -9,7 +9,7 @@ import com.github.jxdong.marble.domain.model.ServerDetail;
 import java.util.List;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/1/13 14:04
  */
 public interface AppRepository extends Repository{

@@ -1,7 +1,7 @@
 package com.github.jxdong.marble.infrastructure.repositories;
 
-import com.github.jxdong.common.util.CommonUtil;
-import com.github.jxdong.common.util.StringUtils;
+import com.github.jxdong.marble.common.util.CommonUtil;
+import com.github.jxdong.marble.common.util.StringUtils;
 import com.github.jxdong.marble.domain.model.Configure;
 import com.github.jxdong.marble.domain.model.Page;
 import com.github.jxdong.marble.domain.model.Result;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/6/25 14:18
  */
 @Repository

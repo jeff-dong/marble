@@ -5,11 +5,13 @@ import com.github.jxdong.marble.domain.model.JobDetail;
 import com.github.jxdong.marble.domain.model.Result;
 import com.github.jxdong.marble.domain.model.SchedulerDetail;
 import com.github.jxdong.marble.domain.model.ServerDetail;
+import com.github.jxdong.marble.agent.entity.ClassInfo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/1/13 14:04
  */
 public interface SchedRepository extends Repository{
@@ -33,5 +35,10 @@ public interface SchedRepository extends Repository{
     Result addJob(JobDetail jobDetail);
 
     Result deleteScheduler(String appCode, String schedName);
+
+    Result executeJobManually(String type, String serverIp, int serverPort, Set<ClassInfo> classInfoSet);
+
+    Result stopJobImmediately(String operator, String appCode, String schedName, String jobName, List<String> serverIps);
+
 
 }

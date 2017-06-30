@@ -1,6 +1,5 @@
 package com.github.jxdong.marble.global.listener;
 
-import com.github.jxdong.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -8,10 +7,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/12/11 13:56
  */
 public class MVCInterceptor implements HandlerInterceptor {
@@ -19,8 +17,9 @@ public class MVCInterceptor implements HandlerInterceptor {
 
     /**
      * 该方法将在Controller处理之前进行调用
-     * 1、判断有没有登录；
-     * 2、参数进行sql+html+js过滤
+     * 1、判断是否为HULK系统调用；
+     * 2、判断有没有登录；
+     * 3、参数进行sql+html+js过滤
      * @param httpServletRequest request
      * @param httpServletResponse response
      * @param o 参数
@@ -30,21 +29,12 @@ public class MVCInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
-        //2、登陆状态校验
+        //登陆状态校验
         if(httpServletRequest.getSession() == null){
             logger.warn("not login. request failed !");
             return false;
         }
-        //3、参数值转化
-        Map<String, String[]> paraMap = httpServletRequest.getParameterMap();
-        if(paraMap != null && paraMap.size()>0){
-            //logger.info("--------转化开始--------");
-            for(Map.Entry<String, String[]> entry : paraMap.entrySet()){
-                if(entry!=null && entry.getValue() !=null){
-                    entry.setValue(StringUtils.escapeInvalidCharForParam(entry.getValue()));
-                }
-            }
-        }
+
         return true;
     }
 
@@ -70,4 +60,24 @@ public class MVCInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
 
     }
+
+//    private String printRequest(HttpServletRequest req){
+//        StringBuffer sb = new StringBuffer();
+//        sb.append("Remote User: ");sb.append(req.getRemoteUser()); sb.append(". ");
+//        sb.append("Remote address: "); sb.append(req.getRemoteAddr()); sb.append(". ");
+//        sb.append("Session: "); sb.append(req.getSession() != null ? req.getSession() : "");
+//
+//        sb.append(". Headers: ");
+//        Enumeration<String> en = req.getHeaderNames();
+//        String header="";
+//        while(en.hasMoreElements()){
+//            header = en.nextElement();
+//            sb.append(header);
+//            sb.append(": ");
+//            sb.append(req.getHeader(header));
+//            sb.append(", ");
+//        }
+//        return sb.toString();
+//
+//    }
 }

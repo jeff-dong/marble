@@ -1,7 +1,8 @@
 package com.github.jxdong.marble.domain.model;
 
-import com.github.jxdong.common.util.JacksonUtil;
-import com.github.jxdong.common.util.StringUtils;
+import com.github.jxdong.marble.common.util.JacksonUtil;
+import com.github.jxdong.marble.common.util.StringUtils;
+import com.github.jxdong.marble.agent.common.server.thrift.ThriftConnectInfo;
 import org.quartz.CronExpression;
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
@@ -10,7 +11,7 @@ import org.quartz.Trigger;
 import java.util.Date;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/11/11 13:07
  */
 public class JobDetail extends Entity {
@@ -29,8 +30,13 @@ public class JobDetail extends Entity {
     private Date endTime;
     private int misfireStrategy;
 
+    //最长等待时间
+    private Long maxWaitTime;
+    //是否同步JOB
+    private boolean isSynchronous;
+
     private String className;
-    private MarbleJobInfo marbleJobInfo;
+    private ThriftConnectInfo connectInfo;
 
     public boolean validateParamForInsert(){
         return !(app==null || StringUtils.isBlank(app.getCode()) ||
@@ -56,10 +62,16 @@ public class JobDetail extends Entity {
             //DataMap数据提取
             JobDataMap dataMap = qJob.getJobDataMap();
             if(dataMap != null ){
-                if(dataMap.get("MARBLE_JOB_INFO")!=null){
-                    marbleJobInfo = JacksonUtil.json2pojo(dataMap.get("MARBLE_JOB_INFO").toString(), MarbleJobInfo.class);
-
-                    this.param = marbleJobInfo.getJobParam();
+                if(dataMap.get("THRIFT_CONNECT_INFO")!=null){
+                    this.connectInfo = JacksonUtil.json2pojo(dataMap.get("THRIFT_CONNECT_INFO").toString(), ThriftConnectInfo.class);
+                }
+                if(dataMap.get("JOB_INFO")!=null){
+                    JobBasicInfo jobBasicInfo = JacksonUtil.json2pojo(dataMap.get("JOB_INFO").toString(), JobBasicInfo.class);
+                    if(jobBasicInfo != null){
+                        this.param = jobBasicInfo.getParam();
+                        this.isSynchronous = jobBasicInfo.isSynchronous();
+                        this.maxWaitTime = jobBasicInfo.getMaxWaitTime();
+                    }
                 }
             }
             if(trigger != null){
@@ -76,8 +88,32 @@ public class JobDetail extends Entity {
         }
     }
 
+    public Long getMaxWaitTime() {
+        return maxWaitTime;
+    }
+
+    public void setMaxWaitTime(Long maxWaitTime) {
+        this.maxWaitTime = maxWaitTime;
+    }
+
+    public boolean isSynchronous() {
+        return isSynchronous;
+    }
+
+    public void setIsSynchronous(boolean isSynchronous) {
+        this.isSynchronous = isSynchronous;
+    }
+
     public String getClassName() {
         return className;
+    }
+
+    public ThriftConnectInfo getConnectInfo() {
+        return connectInfo;
+    }
+
+    public void setConnectInfo(ThriftConnectInfo connectInfo) {
+        this.connectInfo = connectInfo;
     }
 
     public String getTriggerDesc() {

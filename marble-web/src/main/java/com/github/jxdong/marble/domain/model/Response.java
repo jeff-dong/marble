@@ -3,7 +3,7 @@ package com.github.jxdong.marble.domain.model;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author <a href="dongjianxing@aliyun.com">jeff</a>
+ * @author <a href="djx_19881022@163.com">jeff</a>
  * @version 2015/6/25 18:12
  */
 public class Response {
@@ -30,8 +30,8 @@ public class Response {
         if(result != null){
             if(result.isSuccess()){
                 Response res = Response.SUCCESS;
-                if(result.getData() != null){
-                    res.setResult(result.getData());
+                if(result.getOtherInfo() != null){
+                    res.setResult(result.getOtherInfo());
                 }
                return res;
             }else{
