@@ -26,8 +26,11 @@ eclipse-build
 .settings
 /marble-contract.iml
 /marble-agent/*.iml
+/marble-agent/target/
 /marble-common/*.iml
+/marble-common/target/
 /marble-web/*.iml
+/marble-web/target/
 /.idea
 /marble-web/__ConfigTemp/
 /__ConfigTemp
