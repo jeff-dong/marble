@@ -16,7 +16,6 @@
         <argLine>-Dfile.encoding=UTF-8</argLine>
     </properties>
 
-
     <dependencies>
         <!-- marble-contract -->
         <dependency>
