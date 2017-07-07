@@ -5,9 +5,9 @@
 1. 引入marble-agent jar包
 ``` xml
 <dependency>
-            <groupId>com.xxx.xxx</groupId>
+            <groupId>com.github.jeff-dong</groupId>
             <artifactId>marble-agent</artifactId>
-            <version>2.0.5</version>
+            <version>最新版</version>
 </dependency>
 ```
 2. JOB执行代码适当位置添加中断标志, 下面给出示例代码
