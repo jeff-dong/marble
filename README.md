@@ -62,4 +62,5 @@ public class TestSyncMarbleJob1 extends MarbleJob {
 
 ##4 OFFLINE配置JOB执行频率
 
-
+![image.png](https://github.com/jeff-dong/marble/blob/master/document/resource/image2016-9-23%209-33-3.png)
+![image.png](https://github.com/jeff-dong/marble/blob/master/document/resource/image2016-9-23%209-40-50.png)
