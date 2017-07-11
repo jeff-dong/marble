@@ -11,7 +11,7 @@
 4. newSingleThreadExecutor 创建一个单线程化的线程池，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序(FIFO, LIFO, 优先级)执行；
 
 线程池new线程的流程：
-![Paste_Image.png](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-666cb2fd65393956)
+![Paste_Image.png](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-666cb2fd65393956.png)
 
 ##Marble线程池
 
