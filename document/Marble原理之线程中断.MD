@@ -45,10 +45,10 @@ public class Job1 extends MarbleJob {
 ![Marble-线程中断1.jpg](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-b2f772e124219867.jpg)
 
 3.2 选择要中断的服务器进行终端尝试
-![Marble-线程中断(选择服务器).jpg](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-b192bb1edf275c81)
+![Marble-线程中断(选择服务器).jpg](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-b192bb1edf275c81.jpg)
 
 3.3 查看中断日志（同步JOB）
-![Marble-线程中断(log).jpg](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-5d008fef53039e9b)
+![Marble-线程中断(log).jpg](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-5d008fef53039e9b.jpg)
 
 ###中断实现及原理
 
