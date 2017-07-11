@@ -197,4 +197,4 @@ tpool_reject_policy=1
 * 手动进行了“线程中断”调用;
 * 第11次又成功执行;
 
-![Paste_Image.png](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-b9143c5aeb827d80)
+![Paste_Image.png](https://github.com/jeff-dong/marble/blob/master/document/resource/4678905-b9143c5aeb827d80.png)
